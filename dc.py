@@ -50,15 +50,19 @@ NORMAL_DARE_TASKS = [
     "Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."
 ]
 
-# --- YENİ FUNKSİYA: XOŞ GƏLDİN MESAJI ---
+# --- XOŞ GƏLDİN FUNKSİYASI (DƏYİŞİKLİK EDİLİB) ---
 async def welcome_new_members(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Qrupa yeni üzvlər qoşulduqda onları salamlayır."""
     new_members = update.message.new_chat_members
     chat_title = update.message.chat.title
     
     for member in new_members:
+        # Funksiyanın işə düşdüyünü yoxlamaq üçün loglara mesaj yazırıq
+        print(f"New member detected in chat '{chat_title}': {member.first_name} (ID: {member.id})")
+        
         if member.id == context.bot.id:
             continue
+
         welcome_message = (
             f"Salam, [{member.first_name}](tg://user?id={member.id})! 👋\n"
             f"**'{chat_title}'** qrupuna xoş gəlmisən!\n\n"
@@ -67,15 +71,15 @@ async def welcome_new_members(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
         await update.message.reply_text(welcome_message, parse_mode='Markdown')
 
-# --- KÖMƏKÇİ VƏ ƏSAS ƏMRLƏR ---
-async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
+# --- KÖMƏKÇİ VƏ ƏSAS ƏMRLƏR (DƏYİŞİKLİK YOXDUR) ---
+# ... (Bütün köhnə funksiyalar olduğu kimi qalır)
+async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool: #...
     if chat_id == user_id: return True
     try:
         chat_admins = await context.bot.get_chat_administrators(chat_id)
         return user_id in [admin.user.id for admin in chat_admins]
     except Exception: return False
-
-async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
+async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE): #...
     chat_data = context.chat_data
     if not chat_data.get('player_list'):
         await context.bot.send_message(chat_id, "Oyunçu qalmadı. Oyun dayandırılır.")
@@ -84,28 +88,22 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     chat_data['current_player_index'] = (chat_data.get('current_player_index', -1) + 1) % len(chat_data['player_list'])
     current_player = chat_data['player_list'][chat_data['current_player_index']]
     user_id, first_name = current_player['id'], current_player['name']
-    keyboard = [[
-        InlineKeyboardButton("Doğruluq ✅", callback_data=f"game_truth_{user_id}"),
-        InlineKeyboardButton("Cəsarət 😈", callback_data=f"game_dare_{user_id}")
-    ]]
+    keyboard = [[InlineKeyboardButton("Doğruluq ✅", callback_data=f"game_truth_{user_id}"), InlineKeyboardButton("Cəsarət 😈", callback_data=f"game_dare_{user_id}")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(
         chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:",
         reply_markup=reply_markup, parse_mode='Markdown'
     )
-
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     await update.message.reply_text("Salam! 🤖\n\nOyun başlatmaq üçün qrupda /oyun yazın.\nMesaj reytinqinə baxmaq üçün /reyting [dövr] yazın.")
-
-async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     if context.chat_data.get('game_active') or context.chat_data.get('players'):
         await update.message.reply_text("Artıq aktiv bir oyun var. Yeni oyun üçün /dayandir yazın.")
         return
     keyboard = [[InlineKeyboardButton("Oyuna Qoşul 🙋‍♂️", callback_data="register_join")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text("Oyun üçün qeydiyyat başladı! Qoşulmaq üçün düyməyə basın.", reply_markup=reply_markup)
-
-async def start_game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start_game_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     chat_id, user_id = update.message.chat_id, update.message.from_user.id
     if not await is_user_admin(chat_id, user_id, context):
         await update.message.reply_text("⛔ Bu əmri yalnız qrup adminləri istifadə edə bilər.")
@@ -121,8 +119,7 @@ async def start_game_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     player_names = ", ".join([p['name'] for p in player_list])
     await update.message.reply_text(f"Oyun başladı! 🚀\n\nİştirakçılar: {player_names}\n\nİlk oyunçu üçün hazırlaşın...")
     await ask_next_player(chat_id, context)
-
-async def next_turn_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def next_turn_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     chat_id, user_id = update.message.chat_id, update.message.from_user.id
     if not context.chat_data.get('game_active', False):
         await update.message.reply_text("Hazırda aktiv oyun yoxdur.")
@@ -132,16 +129,14 @@ async def next_turn_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     await update.message.reply_text("Sıra növbəti oyunçuya keçir...")
     await ask_next_player(chat_id, context)
-
-async def stop_game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def stop_game_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     chat_id, user_id = update.message.chat_id, update.message.from_user.id
     if not await is_user_admin(chat_id, user_id, context):
         await update.message.reply_text("⛔ Bu əmri yalnız qrup adminləri istifadə edə bilər.")
         return
     context.chat_data.clear()
     await update.message.reply_text("Oyun admin tərəfindən dayandırıldı. Bütün məlumatlar sıfırlandı. Yeni oyun üçün /oyun yazın.")
-
-async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     user = update.message.from_user
     if not context.chat_data.get('game_active', False):
         await update.message.reply_text("Hazırda aktiv oyun yoxdur. Yeni oyun üçün /oyun əmrini gözləyin.")
@@ -150,8 +145,7 @@ async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if 'player_list' in context.chat_data:
         context.chat_data['player_list'].append({'id': user.id, 'name': user.first_name})
     await update.message.reply_text(f"Xoş gəldin, {user.first_name}! Sən də oyuna qoşuldun.")
-
-async def leave_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def leave_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     user_id = update.message.from_user.id
     players = context.chat_data.get('players', {})
     if user_id not in players:
@@ -164,8 +158,7 @@ async def leave_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(players) < 2 and context.chat_data.get('game_active', False):
         await update.message.reply_text("Oyunçu sayı 2-dən az olduğu üçün oyun dayandırıldı.")
         context.chat_data.clear()
-
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
     if data == "register_join":
@@ -193,8 +186,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             response_text = f"🔥 {user.first_name} üçün **Cəsarət**:\n\n> {task}"
         command_suggestion = "\n\n*Cavab verildikdən sonra admin növbəti tura keçmək üçün /novbeti yazsın.*"
         await query.edit_message_text(text=response_text + command_suggestion, parse_mode='Markdown')
-
-async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     chat_id = update.message.chat_id
     args = context.args
     if not args:
@@ -229,8 +221,7 @@ async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logger.error(f"Reytinq alınarkən xəta: {e}")
         await update.message.reply_text("Reytinq cədvəlini hazırlayarkən bir xəta baş verdi.")
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     if not update.message or not update.message.from_user or not update.message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]: return
     user = update.message.from_user
     chat_id = update.message.chat_id
@@ -264,7 +255,11 @@ def main() -> None:
     application.add_handler(CommandHandler("reyting", rating_command, filters=group_filter))
 
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND) & group_filter, handle_message))
-    application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome_new_members, filters=group_filter))
+    
+    # --- ƏSAS DƏYİŞİKLİK BURADADIR ---
+    # Yeni üzvləri "dinləyən" handler-in sintaksisi düzəldildi
+    application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS & group_filter, welcome_new_members))
+    
     application.add_handler(MessageHandler(filters.ChatType.PRIVATE & (~filters.COMMAND), start_command))
     application.add_handler(CallbackQueryHandler(button_handler))
 
