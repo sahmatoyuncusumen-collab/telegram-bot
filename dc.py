@@ -157,4 +157,121 @@ async def leave_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     del players[user_id]
     if 'player_list' in context.chat_data:
-        context.
+        context.chat_data['player_list'] = [p for p in context.chat_data['player_list'] if p['id'] != user_id]
+    await update.message.reply_text(f"{update.message.from_user.first_name} oyundan ayrıldı.")
+    if len(players) < 2 and context.chat_data.get('game_active', False):
+        await update.message.reply_text("Oyunçu sayı 2-dən az olduğu üçün oyun dayandırıldı.")
+        context.chat_data.clear()
+
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
+    await query.answer()
+    if data == "register_join":
+        players = context.chat_data.setdefault('players', {})
+        if user.id not in players:
+            players[user.id] = {'id': user.id, 'name': user.first_name}
+            await query.answer("Uğurla qeydiyyatdan keçdiniz!", show_alert=True)
+            player_names = ", ".join([p['name'] for p in players.values()])
+            keyboard = [[InlineKeyboardButton("Oyuna Qoşul 🙋‍♂️", callback_data="register_join")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            await query.edit_message_text(f"Oyun üçün qeydiyyat davam edir!\n\n**Qoşulanlar:** {player_names}\n\nAdminin oyunu başlatmasını gözləyin (/baslat).", reply_markup=reply_markup, parse_mode='Markdown')
+        else:
+            await query.answer("Siz onsuz da qeydiyyatdan keçmisiniz.", show_alert=True)
+    elif data.startswith("game_"):
+        parts = data.split('_')
+        action, target_user_id = parts[1], int(parts[2])
+        if user.id != target_user_id:
+            await query.answer("⛔ Bu sənin sıran deyil!", show_alert=True)
+            return
+        if action == 'truth':
+            question = random.choice(NORMAL_TRUTH_QUESTIONS)
+            response_text = f"📜 {user.first_name} üçün **Doğruluq**:\n\n> {question}"
+        else:
+            task = random.choice(NORMAL_DARE_TASKS)
+            response_text = f"🔥 {user.first_name} üçün **Cəsarət**:\n\n> {task}"
+        command_suggestion = "\n\n*Cavab verildikdən sonra admin növbəti tura keçmək üçün /novbeti yazsın.*"
+        await query.edit_message_text(text=response_text + command_suggestion, parse_mode='Markdown')
+
+async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.message.chat_id
+    args = context.args
+    if not args:
+        await update.message.reply_text("Zəhmət olmasa, dövrü təyin edin:\n`/reyting gunluk`\n`/reyting heftelik`\n`/reyting ayliq`", parse_mode='Markdown')
+        return
+    period = args[0].lower()
+    if period == "gunluk": interval, title = "1 day", "Son 24 Saatın Ən Aktiv Üzvləri ☀️"
+    elif period == "heftelik": interval, title = "7 days", "Son 7 Günün Ən Aktiv Üzvləri 🗓️"
+    elif period == "ayliq": interval, title = "1 month", "Son 30 Günün Ən Aktiv Üzvləri 🌙"
+    else:
+        await update.message.reply_text("Yanlış dövr. Mümkün seçimlər: gunluk, heftelik, ayliq")
+        return
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cur = conn.cursor()
+        query = f"SELECT user_id, username, COUNT(*) as msg_count FROM message_counts WHERE chat_id = %s AND message_timestamp >= NOW() - INTERVAL '{interval}' GROUP BY user_id, username ORDER BY msg_count DESC LIMIT 10;"
+        cur.execute(query, (chat_id,))
+        results = cur.fetchall()
+        cur.close()
+        conn.close()
+        if not results:
+            await update.message.reply_text("Bu dövr üçün heç bir mesaj tapılmadı.")
+            return
+        leaderboard = f"📊 **{title}**\n\n"
+        for i, (user_id, username, msg_count) in enumerate(results):
+            medal = ""
+            if i == 0: medal = "🥇"
+            elif i == 1: medal = "🥈"
+            elif i == 2: medal = "🥉"
+            leaderboard += f"{i+1}. {medal} [{username}](tg://user?id={user_id}) - `{msg_count}` mesaj\n"
+        await update.message.reply_text(leaderboard, parse_mode='Markdown')
+    except Exception as e:
+        logger.error(f"Reytinq alınarkən xəta: {e}")
+        await update.message.reply_text("Reytinq cədvəlini hazırlayarkən bir xəta baş verdi.")
+
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.from_user or not update.message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]: return
+    user = update.message.from_user
+    chat_id = update.message.chat_id
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cur = conn.cursor()
+        cur.execute("INSERT INTO message_counts (chat_id, user_id, username, message_timestamp) VALUES (%s, %s, %s, %s)",
+                    (chat_id, user.id, user.first_name, datetime.datetime.now(datetime.timezone.utc)))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        logger.error(f"Mesajı bazaya yazarkən xəta: {e}")
+
+def main() -> None:
+    init_db()
+    
+    # Tokeni təhlükəsiz şəkildə Render-dən oxuyuruq
+    TOKEN = os.environ.get("TELEGRAM_TOKEN")
+    
+    if not TOKEN:
+        print("XƏTA: TELEGRAM_TOKEN tapılmadı!")
+        return
+        
+    application = Application.builder().token(TOKEN).build()
+    group_filter = ~filters.ChatType.PRIVATE
+    
+    application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("oyun", game_command, filters=group_filter))
+    application.add_handler(CommandHandler("baslat", start_game_command, filters=group_filter))
+    application.add_handler(CommandHandler("novbeti", next_turn_command, filters=group_filter))
+    application.add_handler(CommandHandler("dayandir", stop_game_command, filters=group_filter))
+    application.add_handler(CommandHandler("qosul", join_command, filters=group_filter))
+    application.add_handler(CommandHandler("cix", leave_command, filters=group_filter))
+    application.add_handler(CommandHandler("reyting", rating_command, filters=group_filter))
+
+    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND) & group_filter, handle_message))
+    application.add_handler(MessageHandler(filters.StatusUpdate.ALL & group_filter, welcome_new_members))
+    application.add_handler(MessageHandler(filters.ChatType.PRIVATE & (~filters.COMMAND), start_command))
+    application.add_handler(CallbackQueryHandler(button_handler))
+
+    print("Bot işə düşdü...")
+    application.run_polling()
+
+if __name__ == '__main__':
+    main()
