@@ -237,7 +237,7 @@ def main() -> None:
     
     # --- DİQQƏT: BU KOD MÜVƏQQƏTİ SINAQ ÜÇÜNDÜR ---
     # Testdən sonra bunu silib köhnə versiyanı qaytaracağıq.
-    TOKEN = "BURA_BOTFATHERDEN_KOPYALADIGINIZ_AKTIV_TOKENI_DIQQETLE_YAPISTIRIN"
+    TOKEN = "7307803335:AAG5Q_BZWnJCZOh5pavaHKO0RWkpf1Sy_fM"
     # TOKEN = os.environ.get("TELEGRAM_TOKEN") # Köhnə, doğru kod budur
     # ---------------------------------------------------
 
@@ -267,4 +267,5 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
