@@ -1,13 +1,6 @@
 import logging
 import random
 import os
-
-# --- YENI SINAQ KODU ---
-# Bu hissə Render-in yaddaşının işləyib-işləmədiyini yoxlamaq üçündür
-TEST_VAR = os.environ.get("TEST_VARIABLE")
-print(f"--- TEST DƏYİŞƏNİNİN DƏYƏRİ: {TEST_VAR} ---")
-# --- SINAQ KODUNUN SONU ---
-
 import psycopg2
 import datetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -57,6 +50,20 @@ NORMAL_DARE_TASKS = [
     "Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."
 ]
 
+# --- RÜTBƏ SİSTEMİ FUNKSİYASI ---
+def get_rank_title(count: int) -> str:
+    """Mesaj sayına görə rütbəni və emojini qaytarır."""
+    if count <= 100:
+        return "Yeni Üzv 👶"
+    elif count <= 500:
+        return "Daimi Sakin 👨‍💻"
+    elif count <= 1000:
+        return "Qrup Söhbətçili 🗣️"
+    elif count <= 2500:
+        return "Qrup Əfsanəsi 👑"
+    else:
+        return "Söhbət Tanrısı ⚡️"
+
 # --- XOŞ GƏLDİN FUNKSİYASI ---
 async def welcome_new_members(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.new_chat_members:
@@ -100,7 +107,7 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Salam! 🤖\n\nOyun başlatmaq üçün qrupda /oyun yazın.\nMesaj reytinqinə baxmaq üçün /reyting [dövr] yazın.")
+    await update.message.reply_text("Salam! 🤖\n\nOyun başlatmaq üçün /oyun yazın.\nMesaj reytinqinə baxmaq üçün /reyting [dövr] yazın.\nÖz rütbənizi görmək üçün /menim_rutbem yazın.")
 
 async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.chat_data.get('game_active') or context.chat_data.get('players'):
@@ -229,11 +236,34 @@ async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if i == 0: medal = "🥇"
             elif i == 1: medal = "🥈"
             elif i == 2: medal = "🥉"
-            leaderboard += f"{i+1}. {medal} [{username}](tg://user?id={user_id}) - `{msg_count}` mesaj\n"
-        await update.message.reply_text(leaderboard, parse_mode='Markdown')
+            rank_title = get_rank_title(msg_count)
+            leaderboard += f"{i+1}. {medal} [{username}](tg://user?id={user_id}) - `{msg_count}` msj ({rank_title})\n"
+        await update.message.reply_text(leaderboard, parse_mode='Markdown', disable_web_page_preview=True)
     except Exception as e:
         logger.error(f"Reytinq alınarkən xəta: {e}")
         await update.message.reply_text("Reytinq cədvəlini hazırlayarkən bir xəta baş verdi.")
+
+async def my_rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.message.from_user.id
+    user_name = update.message.from_user.first_name
+    chat_id = update.message.chat_id
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cur = conn.cursor()
+        query = "SELECT COUNT(*) FROM message_counts WHERE user_id = %s AND chat_id = %s;"
+        cur.execute(query, (user_id, chat_id))
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        total_count = result[0] if result else 0
+        rank_title = get_rank_title(total_count)
+        await update.message.reply_text(
+            f"Salam, {user_name}!\n\n"
+            f"Bu qrupdakı ümumi mesaj sayınız: **{total_count}**\n"
+            f"Hazırkı rütbəniz: **{rank_title}**", parse_mode='Markdown')
+    except Exception as e:
+        logger.error(f"Şəxsi rütbə alınarkən xəta: {e}")
+        await update.message.reply_text("Rütbənizi hesablayarkən bir xəta baş verdi.")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.from_user or not update.message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]: return
@@ -253,6 +283,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main() -> None:
     init_db()
     
+    # Tokeni təhlükəsiz şəkildə Render-dən oxuyuruq
     TOKEN = os.environ.get("TELEGRAM_TOKEN")
     
     if not TOKEN:
@@ -270,6 +301,7 @@ def main() -> None:
     application.add_handler(CommandHandler("qosul", join_command, filters=group_filter))
     application.add_handler(CommandHandler("cix", leave_command, filters=group_filter))
     application.add_handler(CommandHandler("reyting", rating_command, filters=group_filter))
+    application.add_handler(CommandHandler("menim_rutbem", my_rank_command, filters=group_filter))
 
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND) & group_filter, handle_message))
     application.add_handler(MessageHandler(filters.StatusUpdate.ALL & group_filter, welcome_new_members))
