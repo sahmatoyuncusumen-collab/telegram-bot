@@ -39,131 +39,6 @@ RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədi
 NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?","Heç kimin bilmədiyi bir bacarığın varmı?","Bu qrupda ən çox güvəndiyin insan kimdir?","Bir günlük görünməz olsaydın nə edərdin?","Ən çox sevdiyin film hansıdır və niyə?","Ən utancverici ləqəbin nə olub?","Valideynlərinə dediyin ən böyük yalan nə olub?","Heç hovuzun içinə kiçik tualetini etmisən?","Telefonundakı ən son şəkil nədir? (Düzünü de!)","Əgər heyvan olsaydın, hansı heyvan olardın və niyə?","İndiyə qədər aldığın ən pis hədiyyə nə olub?","Heç kimə demədiyin bir sirrin nədir?","Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?","Ən qəribə yemək vərdişin nədir?","Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?","Səni nə ağlada bilər?","Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"]
 NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu.","Əlifbanı sondan əvvələ doğru sürətli şəkildə say.","Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.","Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.","Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.","Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.","Qrupa telefonunun ekran şəklini (screenshot) göndər.","Bir qaşıq qəhvə və ya duz ye.","Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.","Ən çox zəhlən gedən mahnını qrupa göndər.","Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.","Qrupdan birinə zəng et və ona qəribə bir lətifə danış.","İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.","Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.","Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."]
 
-# --- FUNKSİYALAR ---
-def get_rank_title(count: int) -> str:
-    if count <= 100: return "Yeni Üzv 👶"
-    elif count <= 500: return "Daimi Sakin 👨‍💻"
-    elif count <= 1000: return "Qrup Söhbətçili 🗣️"
-    elif count <= 2500: return "Qrup Əfsanəsi 👑"
-    else: return "Söhbət Tanrısı ⚡️"
-
-async def welcome_new_members(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # ... (kod eyni qalır)
-    pass
-
-async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
-    # ... (kod eyni qalır)
-    pass
-# ... (Bütün köhnə funksiyalar aşağıdakı tam kodda mövcuddur)
-
-# --- ƏSAS ƏMRLƏR ---
-
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Bota /start yazıldıqda interaktiv menyu göndərir."""
-    keyboard = [
-        [InlineKeyboardButton("🎲 Doğruluq yoxsa Cəsarət?", callback_data="start_info_oyun")],
-        [
-            InlineKeyboardButton("💡 Tapmaca", callback_data="start_info_tapmaca"),
-            InlineKeyboardButton("🧠 Viktorina", callback_data="start_info_viktorina")
-        ],
-        [InlineKeyboardButton("📊 Reytinq Cədvəli", callback_data="start_info_reyting")],
-        [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    start_text = "Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin əyləncəni seç və ya əmrləri birbaşa yaz!"
-    
-    # Əgər söhbət şəxsidirsə (private), mesajı göndər. Əgər qrupdursa, reply et.
-    if update.message.chat.type == ChatType.PRIVATE:
-        await update.message.reply_text(start_text, reply_markup=reply_markup)
-    else:
-        # Mesajı redaktə edə bilmək üçün ID-ni yadda saxlayırıq
-        sent_message = await update.message.reply_text(start_text, reply_markup=reply_markup)
-        context.chat_data['start_message_id'] = sent_message.message_id
-
-
-# YENİ ƏMR
-async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Bütün oyunlar və funksiyalar haqqında qaydaları göndərir."""
-    rules_text = """
-📜 **Oyun Botunun Qaydaları** 📜
-
-🎲 **Doğruluq yoxsa Cəsarət?**
-- `/oyun`: Yeni oyun üçün qeydiyyat başladır.
-- `/baslat`: (Admin) Qeydiyyatdan keçənlərlə oyunu başladır.
-- `/novbeti`: (Admin) Sıranı növbəti oyunçuya keçirir.
-- `/dayandir`: (Admin) Aktiv oyunu dayandırır.
-- `/qosul` & `/cix`: Oyuna qoşulmaq və ya oyundan ayrılmaq.
-
-💡 **Tapmaca Oyunu**
-- `/tapmaca`: Təsadüfi bir tapmaca göndərir.
-- Düzgün cavabı yazan ilk şəxs qalib gəlir.
-- Tapmacanı heç kim tapa bilmədikdə "Cavabı Göstər" düyməsi ilə cavaba baxmaq olar.
-
-🧠 **Viktorina Oyunu**
-- `/viktorina`: 3 can ilə yeni bir viktorina sualı göndərir.
-- Suala cavab vermək üçün düymələrdən istifadə olunur.
-- Hər səhv cavab bir can aparır. 3 səhv cavabdan sonra oyun bitir. Düzgün cavab verən ilk şəxs qalib olur.
-
-📊 **Reytinq Sistemi**
-- `/reyting [dövr]`: Mesaj statistikasını göstərir (`gunluk`, `heftelik`, `ayliq`).
-- `/menim_rutbem`: Şəxsi mesaj sayınızı və rütbənizi göstərir. Rütbələr mesaj sayınıza görə avtomatik artır.
-    """
-    await update.message.reply_text(rules_text, parse_mode='Markdown')
-
-# ... (qalan bütün köhnə funksiyalar olduğu kimi qalır)
-
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
-    await query.answer()
-
-    # YENİ: /start menyusunun düymələrini idarə edən məntiq
-    if data.startswith("start_info_"):
-        command_map = {
-            'oyun': '/oyun', 'tapmaca': '/tapmaca', 'viktorina': '/viktorina',
-            'reyting': '/reyting gunluk', 'qaydalar': '/qaydalar'
-        }
-        command_name = data.split('_')[-1]
-        command_to_use = command_map.get(command_name)
-        
-        info_text = f"Bu funksiyanı başlatmaq üçün qrupda `{command_to_use}` yazın."
-        
-        # İstifadəçiyə kiçik bir pop-up bildirişi göstəririk
-        await query.answer(info_text, show_alert=True)
-        return
-
-    # ... (qalan bütün köhnə button handler məntiqi)
-    # ... (aşağıdakı tam kodda mövcuddur)
-
-# --- Bütün Dəyişikliklərlə Birlikdə Tam Kod (BUNU KOPYALAYIN) ---
-import logging, random, os, psycopg2, datetime, sys
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
-from telegram.constants import ChatType
-
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-DATABASE_URL = os.environ.get("DATABASE_URL")
-TOKEN = os.environ.get("TELEGRAM_TOKEN")
-
-def run_pre_flight_checks():
-    if not DATABASE_URL or not TOKEN: print("--- XƏTA ---"); print("DATABASE_URL və ya TELEGRAM_TOKEN tapılmadı."); sys.exit(1)
-    print("Bütün konfiqurasiya dəyişənləri mövcuddur. Bot başladılır...")
-
-def init_db():
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require'); cur = conn.cursor()
-        cur.execute("CREATE TABLE IF NOT EXISTS message_counts (id SERIAL PRIMARY KEY, chat_id BIGINT NOT NULL, user_id BIGINT NOT NULL, username TEXT NOT NULL, message_timestamp TIMESTAMPTZ NOT NULL );")
-        conn.commit(); cur.close(); conn.close()
-        print("Verilənlər bazası cədvəli hazırdır.")
-    except Exception as e: print(f"Baza yaradılarkən xəta: {e}")
-
-QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},{'question': 'Hansı planet "Qırmızı Planet" kimi tanınır?', 'options': ['Venera', 'Mars', 'Yupiter', 'Saturn'], 'correct': 'Mars'},{'question': 'Dünyanın ən hündür dağı hansıdır?', 'options': ['K2', 'Everest', 'Makalu', 'Lhotse'], 'correct': 'Everest'},{'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'},{'question': 'Bir il ərzində neçə ayda 31 gün var?', 'options': ['6', '7', '8', '5'], 'correct': '7'},{'question': 'Leonardo da Vinçinin şah əsəri olan "Mona Liza" tablosu hazırda hansı muzeydə sərgilənir?', 'options': ['Britaniya Muzeyi', 'Vatikan Muzeyi', 'Ermitaj', 'Luvr Muzeyi'], 'correct': 'Luvr Muzeyi'}, {'question': 'İnsan bədənində ən böyük orqan hansıdır?', 'options': ['Qaraciyər', 'Dəri', 'Ağciyər', 'Beyin'], 'correct': 'Dəri'}, {'question': 'Dünyanın ən böyük okeanı hansıdır?', 'options': ['Atlantik okeanı', 'Hind okeanı', 'Sakit okean', 'Şimal Buzlu okeanı'], 'correct': 'Sakit okean'}, {'question': 'İkinci Dünya Müharibəsi hansı ildə başlayıb?', 'options': ['1941', '1945', '1939', '1914'], 'correct': '1939'}, {'question': 'Məşhur "Bohemian Rhapsody" mahnısı hansı rok qrupuna aiddir?', 'options': ['The Beatles', 'Led Zeppelin', 'Queen', 'Pink Floyd'], 'correct': 'Queen'}, {'question': 'Novruz bayramının əsas atributlarından olan səməni nəyin rəmzidir?', 'options': ['Odun', 'Suyun', 'Torpağın oyanışı', 'Küləyin'], 'correct': 'Torpağın oyanışı'}, {'question': 'Hansı kimyəvi element qızılın simvoludur?', 'options': ['Ag', 'Au', 'Fe', 'Cu'], 'correct': 'Au'}, {'question': 'İlk mobil telefon zəngi hansı ildə edilib?', 'options': ['1985', '1991', '1973', '1969'], 'correct': '1973'}]
-RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']},{'riddle': 'Gecə yaranar, səhər itər. Bu nədir?', 'answers': ['yuxu', 'röya']},{'riddle': 'Bir qalaçam var, içi dolu qızılca. Bu nədir?', 'answers': ['nar']},{'riddle': 'Nə qədər çox olsa, o qədər az görərsən. Bu nədir?', 'answers': ['qaranlıq']},{'riddle': 'Mənim şəhərlərim var, amma evim yoxdur. Meşələrim var, amma ağacım yoxdur. Sularım var, amma balığım yoxdur. Mən nəyəm?', 'answers': ['xəritə']},{'riddle': 'Hər zaman gəlir, amma heç vaxt gəlib çatmır. Bu nədir?', 'answers': ['sabah']},{'riddle': 'Hər kəsin sahib olduğu, amma heç kimin itirə bilmədiyi şey nədir?', 'answers': ['kölgə']}]
-NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?","Heç kimin bilmədiyi bir bacarığın varmı?","Bu qrupda ən çox güvəndiyin insan kimdir?","Bir günlük görünməz olsaydın nə edərdin?","Ən çox sevdiyin film hansıdır və niyə?","Ən utancverici ləqəbin nə olub?","Valideynlərinə dediyin ən böyük yalan nə olub?","Heç hovuzun içinə kiçik tualetini etmisən?","Telefonundakı ən son şəkil nədir? (Düzünü de!)","Əgər heyvan olsaydın, hansı heyvan olardın və niyə?","İndiyə qədər aldığın ən pis hədiyyə nə olub?","Heç kimə demədiyin bir sirrin nədir?","Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?","Ən qəribə yemək vərdişin nədir?","Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?","Səni nə ağlada bilər?","Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"]
-NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu.","Əlifbanı sondan əvvələ doğru sürətli şəkildə say.","Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.","Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.","Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.","Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.","Qrupa telefonunun ekran şəklini (screenshot) göndər.","Bir qaşıq qəhvə və ya duz ye.","Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.","Ən çox zəhlən gedən mahnını qrupa göndər.","Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.","Qrupdan birinə zəng et və ona qəribə bir lətifə danış.","İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.","Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.","Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."]
-
 def get_rank_title(count: int) -> str:
     if count <= 100: return "Yeni Üzv 👶"
     elif count <= 500: return "Daimi Sakin 👨‍💻"
@@ -193,6 +68,7 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[InlineKeyboardButton("Doğruluq ✅", callback_data=f"game_truth_{user_id}"), InlineKeyboardButton("Cəsarət 😈", callback_data=f"game_dare_{user_id}")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
+
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[InlineKeyboardButton("🎲 Doğruluq yoxsa Cəsarət?", callback_data="start_info_oyun")],
                 [InlineKeyboardButton("💡 Tapmaca", callback_data="start_info_tapmaca"), InlineKeyboardButton("🧠 Viktorina", callback_data="start_info_viktorina")],
@@ -201,6 +77,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     start_text = "Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin əyləncəni seç və ya əmrləri birbaşa yaz!"
     await update.message.reply_text(start_text, reply_markup=reply_markup)
+
 async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     rules_text = """📜 **Oyun Botunun Qaydaları** 📜
 
@@ -223,7 +100,10 @@ async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 📊 **Reytinq Sistemi**
 - `/reyting [dövr]`: Mesaj statistikasını göstərir (`gunluk`, `heftelik`, `ayliq`).
 - `/menim_rutbem`: Şəxsi mesaj sayınızı və rütbənizi göstərir."""
-    await update.message.reply_text(rules_text, parse_mode='Markdown')
+    # Mesajın update obyektindən gəldiyini yoxlayırıq
+    message = update.message if update.message else update.callback_query.message
+    await message.reply_text(rules_text, parse_mode='Markdown')
+
 async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.chat_data.get('game_active') or context.chat_data.get('players'):
         await update.message.reply_text("Artıq aktiv bir oyun var. Yeni oyun üçün /dayandir yazın."); return
@@ -295,10 +175,19 @@ async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
+
     if data.startswith("start_info_"):
         command_map = {'oyun': '/oyun', 'tapmaca': '/tapmaca', 'viktorina': '/viktorina', 'reyting': '/reyting gunluk', 'qaydalar': '/qaydalar'}
-        command_name = data.split('_')[-1]; command_to_use = command_map.get(command_name)
-        await query.answer(f"Bu funksiya üçün qrupda `{command_to_use}` yazın.", show_alert=True); return
+        command_name = data.split('_')[-1]
+        command_to_use = command_map.get(command_name)
+        
+        if command_name == 'qaydalar':
+            await qaydalar_command(query, context)
+        else:
+            info_text = f"Bu funksiyanı başlatmaq üçün məni bir qrupa əlavə edib `{command_to_use}` yazın."
+            await query.answer(info_text, show_alert=True)
+        return
+
     if data.startswith("quiz_"):
         if not context.chat_data.get('quiz_active'):
             await query.answer("Bu viktorina artıq bitib.", show_alert=True); return
@@ -403,7 +292,9 @@ def main() -> None:
     init_db()
     application = Application.builder().token(TOKEN).build()
     group_filter = ~filters.ChatType.PRIVATE
+    
     application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("qaydalar", qaydalar_command))
     application.add_handler(CommandHandler("oyun", game_command, filters=group_filter))
     application.add_handler(CommandHandler("baslat", start_game_command, filters=group_filter))
     application.add_handler(CommandHandler("novbeti", next_turn_command, filters=group_filter))
@@ -414,11 +305,12 @@ def main() -> None:
     application.add_handler(CommandHandler("menim_rutbem", my_rank_command, filters=group_filter))
     application.add_handler(CommandHandler("tapmaca", tapmaca_command, filters=group_filter))
     application.add_handler(CommandHandler("viktorina", viktorina_command, filters=group_filter))
-    application.add_handler(CommandHandler("qaydalar", qaydalar_command)) # YENİ ƏMR
+    
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND) & group_filter, handle_message))
     application.add_handler(MessageHandler(filters.StatusUpdate.ALL & group_filter, welcome_new_members))
     application.add_handler(MessageHandler(filters.ChatType.PRIVATE & (~filters.COMMAND), start_command))
     application.add_handler(CallbackQueryHandler(button_handler))
+
     print("Bot işə düşdü...")
     application.run_polling()
 if __name__ == '__main__':
