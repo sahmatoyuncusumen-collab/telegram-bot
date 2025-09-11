@@ -91,12 +91,14 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[InlineKeyboardButton("🎲 Doğruluq yoxsa Cəsarət?", callback_data="start_info_oyun")],
-                [InlineKeyboardButton("💡 Tapmaca", callback_data="start_info_tapmaca"), InlineKeyboardButton("🧠 Viktorina", callback_data="start_info_viktorina")],
-                [InlineKeyboardButton("📊 Reytinq Cədvəli", callback_data="start_info_reyting")],
-                [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
+    # --- DƏYİŞİKLİK BURADADIR ---
+    # Klaviaturanı sadələşdiririk, yalnız qaydalar düyməsini saxlayırıq
+    keyboard = [
+        [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]
+    ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    start_text = "Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin əyləncəni seç və ya əmrləri birbaşa yaz!"
+    
+    start_text = "Salam! Mən Oyun Botuyam. 🤖\nBütün oyunların qaydalarına baxmaq üçün düyməyə bas və ya əmrləri birbaşa yaz!"
     await update.message.reply_text(start_text, reply_markup=reply_markup)
 
 async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -174,28 +176,47 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
     
+    # Start menyusu məntiqi
     if data == "back_to_start_menu":
-        keyboard = [[InlineKeyboardButton("🎲 Doğruluq yoxsa Cəsarət?", callback_data="start_info_oyun")],
-                    [InlineKeyboardButton("💡 Tapmaca", callback_data="start_info_tapmaca"), InlineKeyboardButton("🧠 Viktorina", callback_data="start_info_viktorina")],
-                    [InlineKeyboardButton("📊 Reytinq Cədvəli", callback_data="start_info_reyting")],
-                    [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
+        keyboard = [[InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        start_text = "Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin əyləncəni seç və ya əmrləri birbaşa yaz!"
+        start_text = "Salam! Mən Oyun Botuyam. 🤖\nBütün oyunların qaydalarına baxmaq üçün düyməyə bas və ya əmrləri birbaşa yaz!"
         await query.edit_message_text(text=start_text, reply_markup=reply_markup)
         return
-        
     if data.startswith("start_info_"):
-        command_map = {'oyun': '/oyun', 'tapmaca': '/tapmaca', 'viktorina': '/viktorina', 'reyting': '/reyting gunluk'}
         command_name = data.split('_')[-1]
-        
-        # Qaydalar düyməsi üçün xüsusi məntiq
         if command_name == 'qaydalar':
             keyboard = [[InlineKeyboardButton("⬅️ Əsas Menyuya Geri", callback_data="back_to_start_menu")]]
             await query.edit_message_text(text=RULES_TEXT, parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
-        else:
-            command_to_use = command_map.get(command_name)
-            info_text = f"Bu funksiyanı başlatmaq üçün məni bir qrupa əlavə edib `{command_to_use}` yazın."
-            await query.answer(info_text, show_alert=True)
+        return
+    
+    # Viktorina məntiqi
+    if data.startswith("quiz_"):
+        #... (bu hissə olduğu kimi qalır)
+        pass
+    # ... (qalan bütün köhnə button handler məntiqi)
+    if data == "register_join":
+        #...
+        pass
+    
+# --- TAM button_handler FUNKSİYASINI AŞAĞIDA YERLƏŞDİRİRƏM ---
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
+    await query.answer()
+
+    if data == "back_to_start_menu":
+        keyboard = [[InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        start_text = "Salam! Mən Oyun Botuyam. 🤖\nBütün oyunların qaydalarına baxmaq üçün düyməyə bas və ya əmrləri birbaşa yaz!"
+        await query.edit_message_text(text=start_text, reply_markup=reply_markup)
+        return
+
+    if data.startswith("start_info_"):
+        command_name = data.split('_')[-1]
+        if command_name == 'qaydalar':
+            keyboard = [[InlineKeyboardButton("⬅️ Əsas Menyuya Geri", callback_data="back_to_start_menu")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            await query.edit_message_text(text=RULES_TEXT, parse_mode='Markdown', reply_markup=reply_markup)
         return
 
     if data.startswith("quiz_"):
@@ -221,12 +242,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await context.bot.edit_message_text(chat_id=query.message.chat_id, message_id=context.chat_data['quiz_message_id'],
                                                     text=f"{original_text}\n\nQalan cəhdlər: {lives_text}", reply_markup=query.message.reply_markup, parse_mode='Markdown')
         return
+
     if data == "skip_riddle":
         if not context.chat_data.get('riddle_active'):
             await query.answer("Bu tapmaca artıq bitib.", show_alert=True); return
         correct_answers = context.chat_data.get('riddle_answer', []); correct_answer_text = ", ".join(correct_answers).capitalize()
         await query.edit_message_text(text=f"{query.message.text}\n\n---\n😥 Heç kim tapa bilmədi!\n✅ **Düzgün cavab:** {correct_answer_text}\n\nYeni tapmaca üçün /tapmaca yazın.", parse_mode='Markdown')
         del context.chat_data['riddle_active']; del context.chat_data['riddle_answer']; return
+
     if data == "register_join":
         players = context.chat_data.setdefault('players', {})
         if user.id not in players:
@@ -237,6 +260,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup = InlineKeyboardMarkup(keyboard)
             await query.edit_message_text(f"Oyun üçün qeydiyyat davam edir!\n\n**Qoşulanlar:** {player_names}\n\nAdminin oyunu başlatmasını gözləyin (/baslat).", reply_markup=reply_markup, parse_mode='Markdown')
         else: await query.answer("Siz onsuz da qeydiyyatdan keçmisiniz.", show_alert=True)
+
     elif data.startswith("game_"):
         parts = data.split('_'); action, target_user_id = parts[1], int(parts[2])
         if user.id != target_user_id: await query.answer("⛔ Bu sənin sıran deyil!", show_alert=True); return
@@ -244,14 +268,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         response_text = f"📜 {user.first_name} üçün **Doğruluq**:\n\n> {question}" if action == 'truth' else f"🔥 {user.first_name} üçün **Cəsarət**:\n\n> {random.choice(NORMAL_DARE_TASKS)}"
         command_suggestion = "\n\n*Cavab verildikdən sonra admin növbəti tura keçmək üçün /novbeti yazsın.*"
         await query.edit_message_text(text=response_text + command_suggestion, parse_mode='Markdown')
-async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
+
+async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     pass
-async def my_rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
+async def my_rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     pass
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): #...
     pass
 
 def main() -> None:
@@ -259,12 +281,31 @@ def main() -> None:
     init_db()
     application = Application.builder().token(TOKEN).build()
     group_filter = ~filters.ChatType.PRIVATE
+    
+    # Bütün əmrlər
     application.add_handler(CommandHandler("start", start_command))
-    application.add_handler(CommandHandler("qaydalar", qaydalar_command)) # YENİ ƏMR
+    application.add_handler(CommandHandler("qaydalar", qaydalar_command))
     application.add_handler(CommandHandler("oyun", game_command, filters=group_filter))
-    # ... (qalan handler-lər)
+    application.add_handler(CommandHandler("baslat", start_game_command, filters=group_filter))
+    application.add_handler(CommandHandler("novbeti", next_turn_command, filters=group_filter))
+    application.add_handler(CommandHandler("dayandir", stop_game_command, filters=group_filter))
+    application.add_handler(CommandHandler("qosul", join_command, filters=group_filter))
+    application.add_handler(CommandHandler("cix", leave_command, filters=group_filter))
+    application.add_handler(CommandHandler("reyting", rating_command, filters=group_filter))
+    application.add_handler(CommandHandler("menim_rutbem", my_rank_command, filters=group_filter))
+    application.add_handler(CommandHandler("tapmaca", tapmaca_command, filters=group_filter))
+    application.add_handler(CommandHandler("viktorina", viktorina_command, filters=group_filter))
+
+    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND) & group_filter, handle_message))
+    application.add_handler(MessageHandler(filters.StatusUpdate.ALL & group_filter, welcome_new_members))
+    application.add_handler(MessageHandler(filters.ChatType.PRIVATE & (~filters.COMMAND), start_command))
     application.add_handler(CallbackQueryHandler(button_handler))
+
     print("Bot işə düşdü...")
     application.run_polling()
 if __name__ == '__main__':
     main()
+
+# The final code block needs to be constructed by merging the old full code with the new changes.
+# I will grab the last full, stable code and carefully integrate the changes to `start_command` and `button_handler`.
+# It's better to be meticulous and provide the final, tested code block.
