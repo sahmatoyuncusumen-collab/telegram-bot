@@ -34,25 +34,12 @@ def init_db():
         print(f"Baza yaradılarkən xəta: {e}")
 
 # --- MƏZMUN SİYAHILARI ---
-QUIZ_QUESTIONS = [
-    {'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},
-    {'question': 'Hansı planet "Qırmızı Planet" kimi tanınır?', 'options': ['Venera', 'Mars', 'Yupiter', 'Saturn'], 'correct': 'Mars'},
-    {'question': 'Dünyanın ən hündür dağı hansıdır?', 'options': ['K2', 'Everest', 'Makalu', 'Lhotse'], 'correct': 'Everest'},
-    {'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'},
-    {'question': 'Bir il ərzində neçə ayda 31 gün var?', 'options': ['6', '7', '8', '5'], 'correct': '7'},
-    {'question': 'Leonardo da Vinçinin şah əsəri olan "Mona Liza" tablosu hazırda hansı muzeydə sərgilənir?', 'options': ['Britaniya Muzeyi', 'Vatikan Muzeyi', 'Ermitaj', 'Luvr Muzeyi'], 'correct': 'Luvr Muzeyi'},
-    {'question': 'İnsan bədənində ən böyük orqan hansıdır?', 'options': ['Qaraciyər', 'Dəri', 'Ağciyər', 'Beyin'], 'correct': 'Dəri'},
-    {'question': 'Dünyanın ən böyük okeanı hansıdır?', 'options': ['Atlantik okeanı', 'Hind okeanı', 'Sakit okean', 'Şimal Buzlu okeanı'], 'correct': 'Sakit okean'},
-    {'question': 'İkinci Dünya Müharibəsi hansı ildə başlayıb?', 'options': ['1941', '1945', '1939', '1914'], 'correct': '1939'},
-    {'question': 'Məşhur "Bohemian Rhapsody" mahnısı hansı rok qrupuna aiddir?', 'options': ['The Beatles', 'Led Zeppelin', 'Queen', 'Pink Floyd'], 'correct': 'Queen'},
-    {'question': 'Novruz bayramının əsas atributlarından olan səməni nəyin rəmzidir?', 'options': ['Odun', 'Suyun', 'Torpağın oyanışı', 'Küləyin'], 'correct': 'Torpağın oyanışı'},
-    {'question': 'Hansı kimyəvi element qızılın simvoludur?', 'options': ['Ag', 'Au', 'Fe', 'Cu'], 'correct': 'Au'},
-    {'question': 'İlk mobil telefon zəngi hansı ildə edilib?', 'options': ['1985', '1991', '1973', '1969'], 'correct': '1973'}
-]
+QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},{'question': 'Hansı planet "Qırmızı Planet" kimi tanınır?', 'options': ['Venera', 'Mars', 'Yupiter', 'Saturn'], 'correct': 'Mars'},{'question': 'Dünyanın ən hündür dağı hansıdır?', 'options': ['K2', 'Everest', 'Makalu', 'Lhotse'], 'correct': 'Everest'},{'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'},{'question': 'Bir il ərzində neçə ayda 31 gün var?', 'options': ['6', '7', '8', '5'], 'correct': '7'},{'question': 'Leonardo da Vinçinin şah əsəri olan "Mona Liza" tablosu hazırda hansı muzeydə sərgilənir?', 'options': ['Britaniya Muzeyi', 'Vatikan Muzeyi', 'Ermitaj', 'Luvr Muzeyi'], 'correct': 'Luvr Muzeyi'}, {'question': 'İnsan bədənində ən böyük orqan hansıdır?', 'options': ['Qaraciyər', 'Dəri', 'Ağciyər', 'Beyin'], 'correct': 'Dəri'}, {'question': 'Dünyanın ən böyük okeanı hansıdır?', 'options': ['Atlantik okeanı', 'Hind okeanı', 'Sakit okean', 'Şimal Buzlu okeanı'], 'correct': 'Sakit okean'}, {'question': 'İkinci Dünya Müharibəsi hansı ildə başlayıb?', 'options': ['1941', '1945', '1939', '1914'], 'correct': '1939'}, {'question': 'Məşhur "Bohemian Rhapsody" mahnısı hansı rok qrupuna aiddir?', 'options': ['The Beatles', 'Led Zeppelin', 'Queen', 'Pink Floyd'], 'correct': 'Queen'}, {'question': 'Novruz bayramının əsas atributlarından olan səməni nəyin rəmzidir?', 'options': ['Odun', 'Suyun', 'Torpağın oyanışı', 'Küləyin'], 'correct': 'Torpağın oyanışı'}, {'question': 'Hansı kimyəvi element qızılın simvoludur?', 'options': ['Ag', 'Au', 'Fe', 'Cu'], 'correct': 'Au'}, {'question': 'İlk mobil telefon zəngi hansı ildə edilib?', 'options': ['1985', '1991', '1973', '1969'], 'correct': '1973'}]
 RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']},{'riddle': 'Gecə yaranar, səhər itər. Bu nədir?', 'answers': ['yuxu', 'röya']},{'riddle': 'Bir qalaçam var, içi dolu qızılca. Bu nədir?', 'answers': ['nar']},{'riddle': 'Nə qədər çox olsa, o qədər az görərsən. Bu nədir?', 'answers': ['qaranlıq']},{'riddle': 'Mənim şəhərlərim var, amma evim yoxdur. Meşələrim var, amma ağacım yoxdur. Sularım var, amma balığım yoxdur. Mən nəyəm?', 'answers': ['xəritə']},{'riddle': 'Hər zaman gəlir, amma heç vaxt gəlib çatmır. Bu nədir?', 'answers': ['sabah']},{'riddle': 'Hər kəsin sahib olduğu, amma heç kimin itirə bilmədiyi şey nədir?', 'answers': ['kölgə']}]
 NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?","Heç kimin bilmədiyi bir bacarığın varmı?","Bu qrupda ən çox güvəndiyin insan kimdir?","Bir günlük görünməz olsaydın nə edərdin?","Ən çox sevdiyin film hansıdır və niyə?","Ən utancverici ləqəbin nə olub?","Valideynlərinə dediyin ən böyük yalan nə olub?","Heç hovuzun içinə kiçik tualetini etmisən?","Telefonundakı ən son şəkil nədir? (Düzünü de!)","Əgər heyvan olsaydın, hansı heyvan olardın və niyə?","İndiyə qədər aldığın ən pis hədiyyə nə olub?","Heç kimə demədiyin bir sirrin nədir?","Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?","Ən qəribə yemək vərdişin nədir?","Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?","Səni nə ağlada bilər?","Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"]
 NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu.","Əlifbanı sondan əvvələ doğru sürətli şəkildə say.","Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.","Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.","Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.","Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.","Qrupa telefonunun ekran şəklini (screenshot) göndər.","Bir qaşıq qəhvə və ya duz ye.","Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.","Ən çox zəhlən gedən mahnını qrupa göndər.","Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.","Qrupdan birinə zəng et və ona qəribə bir lətifə danış.","İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.","Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.","Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."]
 
+# --- FUNKSİYALAR ---
 def get_rank_title(count: int) -> str:
     if count <= 100: return "Yeni Üzv 👶"
     elif count <= 500: return "Daimi Sakin 👨‍💻"
@@ -61,134 +48,94 @@ def get_rank_title(count: int) -> str:
     else: return "Söhbət Tanrısı ⚡️"
 
 async def welcome_new_members(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message or not update.message.new_chat_members: return
-    new_members, chat_title = update.message.new_chat_members, update.message.chat.title
-    for member in new_members:
-        if member.id == context.bot.id: continue
-        welcome_message = (f"Salam, [{member.first_name}](tg://user?id={member.id})! 👋\n"
-                         f"**'{chat_title}'** qrupuna xoş gəlmisən!\n\n"
-                         "Mən bu qrupun əyləncə və statistika botuyam. /oyun, /tapmaca və ya /viktorina yaza bilərsiniz.\n\n"
-                         "Qrupun ən aktiv üzvlərini görmək üçün isə /reyting gunluk əmrini istifadə et.")
-        await update.message.reply_text(welcome_message, parse_mode='Markdown')
+    # ... (kod eyni qalır)
+    pass
+
 async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
-    if chat_id == user_id: return True
-    try: return user_id in [admin.user.id for admin in await context.bot.get_chat_administrators(chat_id)]
-    except Exception: return False
-async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
-    chat_data = context.chat_data
-    if not chat_data.get('player_list'):
-        await context.bot.send_message(chat_id, "Oyunçu qalmadı. Oyun dayandırılır."); context.chat_data.clear(); return
-    chat_data['current_player_index'] = (chat_data.get('current_player_index', -1) + 1) % len(chat_data['player_list'])
-    current_player = chat_data['player_list'][chat_data['current_player_index']]
-    user_id, first_name = current_player['id'], current_player['name']
-    keyboard = [[InlineKeyboardButton("Doğruluq ✅", callback_data=f"game_truth_{user_id}"), InlineKeyboardButton("Cəsarət 😈", callback_data=f"game_dare_{user_id}")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
+    # ... (kod eyni qalır)
+    pass
+# ... (Bütün köhnə funksiyalar aşağıdakı tam kodda mövcuddur)
+
+# --- ƏSAS ƏMRLƏR ---
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Salam! 🤖\n\nQrupda əyləncə üçün əmrlər:\n`/oyun` - Doğruluq yoxsa Cəsarət?\n`/tapmaca` - Tapmaca oyunu\n`/viktorina` - Viktorina oyunu\n\nStatistika üçün:\n`/reyting [dövr]`\n`/menim_rutbem`")
-
-async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
-    pass
-async def start_game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
-    pass
-async def next_turn_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
-    pass
-async def stop_game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
-    pass
-async def join_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
-    pass
-async def leave_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    #... (kod eyni qalır)
-    pass
-async def tapmaca_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if context.chat_data.get('riddle_active'):
-        await update.message.reply_text("Artıq aktiv bir tapmaca var! Zəhmət olmasa, əvvəlcə onu tapın."); return
-    chosen_riddle = random.choice(RIDDLES)
-    context.chat_data['riddle_answer'] = [ans.lower() for ans in chosen_riddle['answers']]
-    context.chat_data['riddle_active'] = True
-    keyboard = [[InlineKeyboardButton("Cavabı Göstər 💡", callback_data="skip_riddle")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(f"Tapmaca gəldi! 🕵️‍♂️\n\n**{chosen_riddle['riddle']}**", parse_mode='Markdown', reply_markup=reply_markup)
-
-async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id = update.message.chat_id
-    if context.chat_data.get('quiz_active'):
-        await update.message.reply_text("Artıq aktiv bir viktorina var! Zəhmət olmasa, əvvəlcə onu cavablandırın."); return
-    
-    question_data = random.choice(QUIZ_QUESTIONS)
-    question, correct_answer, options = question_data['question'], question_data['correct'], list(question_data['options'])
-    random.shuffle(options)
-    
-    context.chat_data['correct_quiz_answer'] = correct_answer
-    context.chat_data['quiz_active'] = True
-    context.chat_data['quiz_lives'] = 3 # YENİ: Canları təyin edirik
-    
-    keyboard = [[InlineKeyboardButton(option, callback_data=f"quiz_{option}")] for option in options]
+    """Bota /start yazıldıqda interaktiv menyu göndərir."""
+    keyboard = [
+        [InlineKeyboardButton("🎲 Doğruluq yoxsa Cəsarət?", callback_data="start_info_oyun")],
+        [
+            InlineKeyboardButton("💡 Tapmaca", callback_data="start_info_tapmaca"),
+            InlineKeyboardButton("🧠 Viktorina", callback_data="start_info_viktorina")
+        ],
+        [InlineKeyboardButton("📊 Reytinq Cədvəli", callback_data="start_info_reyting")],
+        [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]
+    ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    lives_text = "❤️❤️❤️"
-    message = await update.message.reply_text(
-        f"Viktorina başladı! 🧠\n\n**Sual:** {question}\n\nQalan cəhdlər: {lives_text}",
-        parse_mode='Markdown', reply_markup=reply_markup
-    )
-    context.chat_data['quiz_message_id'] = message.message_id
+    start_text = "Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin əyləncəni seç və ya əmrləri birbaşa yaz!"
+    
+    # Əgər söhbət şəxsidirsə (private), mesajı göndər. Əgər qrupdursa, reply et.
+    if update.message.chat.type == ChatType.PRIVATE:
+        await update.message.reply_text(start_text, reply_markup=reply_markup)
+    else:
+        # Mesajı redaktə edə bilmək üçün ID-ni yadda saxlayırıq
+        sent_message = await update.message.reply_text(start_text, reply_markup=reply_markup)
+        context.chat_data['start_message_id'] = sent_message.message_id
+
+
+# YENİ ƏMR
+async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Bütün oyunlar və funksiyalar haqqında qaydaları göndərir."""
+    rules_text = """
+📜 **Oyun Botunun Qaydaları** 📜
+
+🎲 **Doğruluq yoxsa Cəsarət?**
+- `/oyun`: Yeni oyun üçün qeydiyyat başladır.
+- `/baslat`: (Admin) Qeydiyyatdan keçənlərlə oyunu başladır.
+- `/novbeti`: (Admin) Sıranı növbəti oyunçuya keçirir.
+- `/dayandir`: (Admin) Aktiv oyunu dayandırır.
+- `/qosul` & `/cix`: Oyuna qoşulmaq və ya oyundan ayrılmaq.
+
+💡 **Tapmaca Oyunu**
+- `/tapmaca`: Təsadüfi bir tapmaca göndərir.
+- Düzgün cavabı yazan ilk şəxs qalib gəlir.
+- Tapmacanı heç kim tapa bilmədikdə "Cavabı Göstər" düyməsi ilə cavaba baxmaq olar.
+
+🧠 **Viktorina Oyunu**
+- `/viktorina`: 3 can ilə yeni bir viktorina sualı göndərir.
+- Suala cavab vermək üçün düymələrdən istifadə olunur.
+- Hər səhv cavab bir can aparır. 3 səhv cavabdan sonra oyun bitir. Düzgün cavab verən ilk şəxs qalib olur.
+
+📊 **Reytinq Sistemi**
+- `/reyting [dövr]`: Mesaj statistikasını göstərir (`gunluk`, `heftelik`, `ayliq`).
+- `/menim_rutbem`: Şəxsi mesaj sayınızı və rütbənizi göstərir. Rütbələr mesaj sayınıza görə avtomatik artır.
+    """
+    await update.message.reply_text(rules_text, parse_mode='Markdown')
+
+# ... (qalan bütün köhnə funksiyalar olduğu kimi qalır)
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
-    
-    if data.startswith("quiz_"):
-        if not context.chat_data.get('quiz_active'):
-            await query.answer("Bu viktorina artıq bitib.", show_alert=True); return
 
-        chosen_answer = data.split('_', 1)[1]
-        correct_answer = context.chat_data['correct_quiz_answer']
+    # YENİ: /start menyusunun düymələrini idarə edən məntiq
+    if data.startswith("start_info_"):
+        command_map = {
+            'oyun': '/oyun', 'tapmaca': '/tapmaca', 'viktorina': '/viktorina',
+            'reyting': '/reyting gunluk', 'qaydalar': '/qaydalar'
+        }
+        command_name = data.split('_')[-1]
+        command_to_use = command_map.get(command_name)
         
-        if chosen_answer == correct_answer:
-            await query.answer("Düzdür!", show_alert=False)
-            await context.bot.edit_message_text(
-                chat_id=query.message.chat_id, message_id=context.chat_data['quiz_message_id'],
-                text=f"{query.message.text.split('Qalan cəhdlər:')[0].strip()}\n\n---\n🥳 Qalib: {user.first_name}!\n✅ Düzgün cavab: **{correct_answer}**",
-                parse_mode='Markdown'
-            )
-            del context.chat_data['quiz_active']; del context.chat_data['correct_quiz_answer']; del context.chat_data['quiz_message_id']; del context.chat_data['quiz_lives']
-        else:
-            context.chat_data['quiz_lives'] -= 1
-            lives_left = context.chat_data['quiz_lives']
-            await query.answer(f"Səhv cavab! {lives_left} cəhdiniz qaldı.", show_alert=True)
-            
-            if lives_left == 0:
-                await context.bot.edit_message_text(
-                    chat_id=query.message.chat_id, message_id=context.chat_data['quiz_message_id'],
-                    text=f"{query.message.text.split('Qalan cəhdlər:')[0].strip()}\n\n---\n😔 Məğlub oldunuz! Bütün cəhdlər bitdi.\n✅ Düzgün cavab: **{correct_answer}**",
-                    parse_mode='Markdown'
-                )
-                del context.chat_data['quiz_active']; del context.chat_data['correct_quiz_answer']; del context.chat_data['quiz_message_id']; del context.chat_data['quiz_lives']
-            else:
-                lives_text = "❤️" * lives_left
-                await query.edit_message_reply_markup(
-                    reply_markup=query.message.reply_markup # keep buttons
-                )
-                await context.bot.edit_message_text(
-                    chat_id=query.message.chat_id, message_id=context.chat_data['quiz_message_id'],
-                    text=f"{query.message.text.split('Qalan cəhdlər:')[0].strip()}\n\nQalan cəhdlər: {lives_text}",
-                    reply_markup=query.message.reply_markup,
-                    parse_mode='Markdown'
-                )
+        info_text = f"Bu funksiyanı başlatmaq üçün qrupda `{command_to_use}` yazın."
+        
+        # İstifadəçiyə kiçik bir pop-up bildirişi göstəririk
+        await query.answer(info_text, show_alert=True)
         return
-    
-    # ... (qalan button handler məntiqi eyni qalır)
-    pass
 
-# ... (rating_command, my_rank_command, handle_message olduğu kimi qalır)
-# ... (main() funksiyası yeni viktorina əmri ilə yenilənir)
-# ... AŞAĞIDA TAM KODU YERLƏŞDİRİRƏM ...
+    # ... (qalan bütün köhnə button handler məntiqi)
+    # ... (aşağıdakı tam kodda mövcuddur)
+
+# --- Bütün Dəyişikliklərlə Birlikdə Tam Kod (BUNU KOPYALAYIN) ---
 import logging, random, os, psycopg2, datetime, sys
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
@@ -206,8 +153,7 @@ def run_pre_flight_checks():
 
 def init_db():
     try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require'); cur = conn.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS message_counts (id SERIAL PRIMARY KEY, chat_id BIGINT NOT NULL, user_id BIGINT NOT NULL, username TEXT NOT NULL, message_timestamp TIMESTAMPTZ NOT NULL );")
         conn.commit(); cur.close(); conn.close()
         print("Verilənlər bazası cədvəli hazırdır.")
@@ -231,8 +177,7 @@ async def welcome_new_members(update: Update, context: ContextTypes.DEFAULT_TYPE
         if member.id == context.bot.id: continue
         welcome_message = (f"Salam, [{member.first_name}](tg://user?id={member.id})! 👋\n"
                          f"**'{chat_title}'** qrupuna xoş gəlmisən!\n\n"
-                         "Mən bu qrupun əyləncə və statistika botuyam. /oyun, /tapmaca və ya /viktorina yaza bilərsiniz.\n\n"
-                         "Qrupun ən aktiv üzvlərini görmək üçün isə /reyting gunluk əmrini istifadə et.")
+                         "Mən bu qrupun əyləncə və statistika botuyam. Əmrləri görmək üçün /start yaz.")
         await update.message.reply_text(welcome_message, parse_mode='Markdown')
 async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
     if chat_id == user_id: return True
@@ -249,7 +194,36 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Salam! 🤖\n\nQrupda əyləncə üçün əmrlər:\n`/oyun` - Doğruluq yoxsa Cəsarət?\n`/tapmaca` - Tapmaca oyunu\n`/viktorina` - Viktorina oyunu\n\nStatistika üçün:\n`/reyting [dövr]`\n`/menim_rutbem`")
+    keyboard = [[InlineKeyboardButton("🎲 Doğruluq yoxsa Cəsarət?", callback_data="start_info_oyun")],
+                [InlineKeyboardButton("💡 Tapmaca", callback_data="start_info_tapmaca"), InlineKeyboardButton("🧠 Viktorina", callback_data="start_info_viktorina")],
+                [InlineKeyboardButton("📊 Reytinq Cədvəli", callback_data="start_info_reyting")],
+                [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    start_text = "Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin əyləncəni seç və ya əmrləri birbaşa yaz!"
+    await update.message.reply_text(start_text, reply_markup=reply_markup)
+async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    rules_text = """📜 **Oyun Botunun Qaydaları** 📜
+
+🎲 **Doğruluq yoxsa Cəsarət?**
+- `/oyun`: Yeni oyun üçün qeydiyyat başladır.
+- `/baslat`: (Admin) Qeydiyyatdan keçənlərlə oyunu başladır.
+- `/novbeti`: (Admin) Sıranı növbəti oyunçuya keçirir.
+- `/dayandir`: (Admin) Aktiv oyunu dayandırır.
+- `/qosul` & `/cix`: Oyuna qoşulmaq və ya oyundan ayrılmaq.
+
+💡 **Tapmaca Oyunu**
+- `/tapmaca`: Təsadüfi bir tapmaca göndərir.
+- Düzgün cavabı yazan ilk şəxs qalib gəlir.
+- "Cavabı Göstər" düyməsi ilə cavaba baxmaq olar.
+
+🧠 **Viktorina Oyunu**
+- `/viktorina`: 3 can ilə yeni bir viktorina sualı göndərir.
+- Hər səhv cavab bir can aparır. 3 səhv cəhddən sonra oyun bitir.
+
+📊 **Reytinq Sistemi**
+- `/reyting [dövr]`: Mesaj statistikasını göstərir (`gunluk`, `heftelik`, `ayliq`).
+- `/menim_rutbem`: Şəxsi mesaj sayınızı və rütbənizi göstərir."""
+    await update.message.reply_text(rules_text, parse_mode='Markdown')
 async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.chat_data.get('game_active') or context.chat_data.get('players'):
         await update.message.reply_text("Artıq aktiv bir oyun var. Yeni oyun üçün /dayandir yazın."); return
@@ -263,8 +237,7 @@ async def start_game_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     players = context.chat_data.get('players', {})
     if len(players) < 2:
         await update.message.reply_text("Oyunun başlaması üçün ən az 2 nəfər qeydiyyatdan keçməlidir."); return
-    context.chat_data['game_active'] = True
-    player_list = list(players.values()); random.shuffle(player_list)
+    context.chat_data['game_active'] = True; player_list = list(players.values()); random.shuffle(player_list)
     context.chat_data['player_list'] = player_list
     player_names = ", ".join([p['name'] for p in player_list])
     await update.message.reply_text(f"Oyun başladı! 🚀\n\nİştirakçılar: {player_names}\n\nİlk oyunçu üçün hazırlaşın...")
@@ -313,20 +286,19 @@ async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     if context.chat_data.get('quiz_active'):
         await update.message.reply_text("Artıq aktiv bir viktorina var! Zəhmət olmasa, əvvəlcə onu cavablandırın."); return
-    question_data = random.choice(QUIZ_QUESTIONS)
-    question, correct_answer, options = question_data['question'], question_data['correct'], list(question_data['options'])
-    random.shuffle(options)
-    context.chat_data['correct_quiz_answer'] = correct_answer
-    context.chat_data['quiz_active'] = True
-    context.chat_data['quiz_lives'] = 3
+    question_data = random.choice(QUIZ_QUESTIONS); question, correct_answer, options = question_data['question'], question_data['correct'], list(question_data['options'])
+    random.shuffle(options); context.chat_data['correct_quiz_answer'] = correct_answer; context.chat_data['quiz_active'] = True; context.chat_data['quiz_lives'] = 3
     keyboard = [[InlineKeyboardButton(option, callback_data=f"quiz_{option}")] for option in options]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    lives_text = "❤️❤️❤️"
-    message = await update.message.reply_text(f"Viktorina başladı! 🧠\n\n**Sual:** {question}\n\nQalan cəhdlər: {lives_text}", parse_mode='Markdown', reply_markup=reply_markup)
+    lives_text = "❤️❤️❤️"; message = await update.message.reply_text(f"Viktorina başladı! 🧠\n\n**Sual:** {question}\n\nQalan cəhdlər: {lives_text}", parse_mode='Markdown', reply_markup=reply_markup)
     context.chat_data['quiz_message_id'] = message.message_id
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
+    if data.startswith("start_info_"):
+        command_map = {'oyun': '/oyun', 'tapmaca': '/tapmaca', 'viktorina': '/viktorina', 'reyting': '/reyting gunluk', 'qaydalar': '/qaydalar'}
+        command_name = data.split('_')[-1]; command_to_use = command_map.get(command_name)
+        await query.answer(f"Bu funksiya üçün qrupda `{command_to_use}` yazın.", show_alert=True); return
     if data.startswith("quiz_"):
         if not context.chat_data.get('quiz_active'):
             await query.answer("Bu viktorina artıq bitib.", show_alert=True); return
@@ -335,33 +307,27 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.answer("Düzdür!", show_alert=False)
             original_text = query.message.text.split('Qalan cəhdlər:')[0].strip()
             await context.bot.edit_message_text(chat_id=query.message.chat_id, message_id=context.chat_data['quiz_message_id'],
-                                                text=f"{original_text}\n\n---\n🥳 Qalib: {user.first_name}!\n✅ Düzgün cavab: **{correct_answer}**",
-                                                parse_mode='Markdown')
+                                                text=f"{original_text}\n\n---\n🥳 Qalib: {user.first_name}!\n✅ Düzgün cavab: **{correct_answer}**", parse_mode='Markdown')
             del context.chat_data['quiz_active']; del context.chat_data['correct_quiz_answer']; del context.chat_data['quiz_message_id']; del context.chat_data['quiz_lives']
         else:
-            context.chat_data['quiz_lives'] -= 1
-            lives_left = context.chat_data['quiz_lives']
+            context.chat_data['quiz_lives'] -= 1; lives_left = context.chat_data['quiz_lives']
             await query.answer(f"Səhv cavab! {lives_left} cəhdiniz qaldı.", show_alert=True)
             if lives_left == 0:
                 original_text = query.message.text.split('Qalan cəhdlər:')[0].strip()
                 await context.bot.edit_message_text(chat_id=query.message.chat_id, message_id=context.chat_data['quiz_message_id'],
-                                                    text=f"{original_text}\n\n---\n😔 Məğlub oldunuz! Bütün cəhdlər bitdi.\n✅ Düzgün cavab: **{correct_answer}**",
-                                                    parse_mode='Markdown')
+                                                    text=f"{original_text}\n\n---\n😔 Məğlub oldunuz! Bütün cəhdlər bitdi.\n✅ Düzgün cavab: **{correct_answer}**", parse_mode='Markdown')
                 del context.chat_data['quiz_active']; del context.chat_data['correct_quiz_answer']; del context.chat_data['quiz_message_id']; del context.chat_data['quiz_lives']
             else:
-                lives_text = "❤️" * lives_left
-                original_text = query.message.text.split('Qalan cəhdlər:')[0].strip()
+                lives_text = "❤️" * lives_left; original_text = query.message.text.split('Qalan cəhdlər:')[0].strip()
                 await context.bot.edit_message_text(chat_id=query.message.chat_id, message_id=context.chat_data['quiz_message_id'],
-                                                    text=f"{original_text}\n\nQalan cəhdlər: {lives_text}",
-                                                    reply_markup=query.message.reply_markup, parse_mode='Markdown')
+                                                    text=f"{original_text}\n\nQalan cəhdlər: {lives_text}", reply_markup=query.message.reply_markup, parse_mode='Markdown')
         return
     if data == "skip_riddle":
         if not context.chat_data.get('riddle_active'):
             await query.answer("Bu tapmaca artıq bitib.", show_alert=True); return
         correct_answers = context.chat_data.get('riddle_answer', []); correct_answer_text = ", ".join(correct_answers).capitalize()
         await query.edit_message_text(text=f"{query.message.text}\n\n---\n😥 Heç kim tapa bilmədi!\n✅ **Düzgün cavab:** {correct_answer_text}\n\nYeni tapmaca üçün /tapmaca yazın.", parse_mode='Markdown')
-        del context.chat_data['riddle_active']; del context.chat_data['riddle_answer']
-        return
+        del context.chat_data['riddle_active']; del context.chat_data['riddle_answer']; return
     if data == "register_join":
         players = context.chat_data.setdefault('players', {})
         if user.id not in players:
@@ -431,6 +397,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         conn.commit(); cur.close(); conn.close()
     except Exception as e:
         logger.error(f"Mesajı bazaya yazarkən xəta: {e}")
+
 def main() -> None:
     run_pre_flight_checks()
     init_db()
@@ -447,6 +414,7 @@ def main() -> None:
     application.add_handler(CommandHandler("menim_rutbem", my_rank_command, filters=group_filter))
     application.add_handler(CommandHandler("tapmaca", tapmaca_command, filters=group_filter))
     application.add_handler(CommandHandler("viktorina", viktorina_command, filters=group_filter))
+    application.add_handler(CommandHandler("qaydalar", qaydalar_command)) # YENİ ƏMR
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND) & group_filter, handle_message))
     application.add_handler(MessageHandler(filters.StatusUpdate.ALL & group_filter, welcome_new_members))
     application.add_handler(MessageHandler(filters.ChatType.PRIVATE & (~filters.COMMAND), start_command))
