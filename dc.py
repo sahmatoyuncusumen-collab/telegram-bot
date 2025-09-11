@@ -30,59 +30,40 @@ def init_db():
     except Exception as e:
         print(f"Baza yaradılarkən xəta: {e}")
 
-# --- SUAL VƏ TAPŞIRIQ SİYAHILARI ---
-NORMAL_TRUTH_QUESTIONS = [
-    "Uşaqlıqda ən böyük qorxun nə idi?", "Həyatında ən çox peşman olduğun şey?", "Heç kimin bilmədiyi bir bacarığın varmı?",
-    "Bu qrupda ən çox güvəndiyin insan kimdir?", "Bir günlük görünməz olsaydın nə edərdin?", "Ən çox sevdiyin film hansıdır və niyə?",
-    "Ən utancverici ləqəbin nə olub?", "Valideynlərinə dediyin ən böyük yalan nə olub?", "Heç hovuzun içinə kiçik tualetini etmisən?",
-    "Telefonundakı ən son şəkil nədir? (Düzünü de!)", "Əgər heyvan olsaydın, hansı heyvan olardın və niyə?", "İndiyə qədər aldığın ən pis hədiyyə nə olub?",
-    "Heç kimə demədiyin bir sirrin nədir?", "Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?", "Ən qəribə yemək vərdişin nədir?",
-    "Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?", "Səni nə ağlada bilər?", "Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"
+# --- MƏZMUN SİYAHILARI ---
+RIDDLES = [
+    {'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']},
+    {'riddle': 'Gecə yaranar, səhər itər. Bu nədir?', 'answers': ['yuxu', 'röya']},
+    {'riddle': 'Bir qalaçam var, içi dolu qızılca. Bu nədir?', 'answers': ['nar']},
+    {'riddle': 'Nə qədər çox olsa, o qədər az görərsən. Bu nədir?', 'answers': ['qaranlıq']},
+    {'riddle': 'Mənim şəhərlərim var, amma evim yoxdur. Meşələrim var, amma ağacım yoxdur. Sularım var, amma balığım yoxdur. Mən nəyəm?', 'answers': ['xəritə']},
+    {'riddle': 'Hər zaman gəlir, amma heç vaxt gəlib çatmır. Bu nədir?', 'answers': ['sabah']},
+    {'riddle': 'Hər kəsin sahib olduğu, amma heç kimin itirə bilmədiyi şey nədir?', 'answers': ['kölgə']}
 ]
-NORMAL_DARE_TASKS = [
-    "Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.", "Qrupdakı birinə səsli mesajla mahnı oxu.",
-    "Əlifbanı sondan əvvələ doğru sürətli şəkildə say.", "Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.",
-    "Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.", "Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.",
-    "Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.", "Qrupa telefonunun ekran şəklini (screenshot) göndər.",
-    "Bir qaşıq qəhvə və ya duz ye.", "Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.", "Ən çox zəhlən gedən mahnını qrupa göndər.",
-    "Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.", "Qrupdan birinə zəng et və ona qəribə bir lətifə danış.",
-    "İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.", "Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.",
-    "Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."
-]
+NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?","Heç kimin bilmədiyi bir bacarığın varmı?","Bu qrupda ən çox güvəndiyin insan kimdir?","Bir günlük görünməz olsaydın nə edərdin?","Ən çox sevdiyin film hansıdır və niyə?","Ən utancverici ləqəbin nə olub?","Valideynlərinə dediyin ən böyük yalan nə olub?","Heç hovuzun içinə kiçik tualetini etmisən?","Telefonundakı ən son şəkil nədir? (Düzünü de!)","Əgər heyvan olsaydın, hansı heyvan olardın və niyə?","İndiyə qədər aldığın ən pis hədiyyə nə olub?","Heç kimə demədiyin bir sirrin nədir?","Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?","Ən qəribə yemək vərdişin nədir?","Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?","Səni nə ağlada bilər?","Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"]
+NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu.","Əlifbanı sondan əvvələ doğru sürətli şəkildə say.","Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.","Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.","Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.","Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.","Qrupa telefonunun ekran şəklini (screenshot) göndər.","Bir qaşıq qəhvə və ya duz ye.","Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.","Ən çox zəhlən gedən mahnını qrupa göndər.","Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.","Qrupdan birinə zəng et və ona qəribə bir lətifə danış.","İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.","Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.","Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."]
 
 # --- RÜTBƏ SİSTEMİ FUNKSİYASI ---
 def get_rank_title(count: int) -> str:
-    """Mesaj sayına görə rütbəni və emojini qaytarır."""
-    if count <= 100:
-        return "Yeni Üzv 👶"
-    elif count <= 500:
-        return "Daimi Sakin 👨‍💻"
-    elif count <= 1000:
-        return "Qrup Söhbətçili 🗣️"
-    elif count <= 2500:
-        return "Qrup Əfsanəsi 👑"
-    else:
-        return "Söhbət Tanrısı ⚡️"
+    if count <= 100: return "Yeni Üzv 👶"
+    elif count <= 500: return "Daimi Sakin 👨‍💻"
+    elif count <= 1000: return "Qrup Söhbətçili 🗣️"
+    elif count <= 2500: return "Qrup Əfsanəsi 👑"
+    else: return "Söhbət Tanrısı ⚡️"
 
-# --- XOŞ GƏLDİN FUNKSİYASI ---
+# --- XOŞ GƏLDİN VƏ DİGƏR KÖMƏKÇİ FUNKSİYALAR ---
 async def welcome_new_members(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message or not update.message.new_chat_members:
-        return
+    if not update.message or not update.message.new_chat_members: return
     new_members = update.message.new_chat_members
     chat_title = update.message.chat.title
     for member in new_members:
-        print(f"New member detected in chat '{chat_title}': {member.first_name} (ID: {member.id})")
-        if member.id == context.bot.id:
-            continue
-        welcome_message = (
-            f"Salam, [{member.first_name}](tg://user?id={member.id})! 👋\n"
-            f"**'{chat_title}'** qrupuna xoş gəlmisən!\n\n"
-            "Mən bu qrupun əyləncə və statistika botuyam. Dostlarınla 'Doğruluq yoxsa Cəsarət?' oynamaq üçün /oyun yaza bilərsiniz.\n\n"
-            "Qrupun ən aktiv üzvlərini görmək üçün isə /reyting gunluk əmrini istifadə et."
-        )
+        if member.id == context.bot.id: continue
+        welcome_message = (f"Salam, [{member.first_name}](tg://user?id={member.id})! 👋\n"
+                         f"**'{chat_title}'** qrupuna xoş gəlmisən!\n\n"
+                         "Mən bu qrupun əyləncə və statistika botuyam. /oyun və ya /tapmaca yaza bilərsiniz.\n\n"
+                         "Qrupun ən aktiv üzvlərini görmək üçün isə /reyting gunluk əmrini istifadə et.")
         await update.message.reply_text(welcome_message, parse_mode='Markdown')
 
-# --- KÖMƏKÇİ VƏ ƏSAS ƏMRLƏR ---
 async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
     if chat_id == user_id: return True
     try:
@@ -106,8 +87,9 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup, parse_mode='Markdown'
     )
 
+# --- ƏSAS ƏMRLƏR ---
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Salam! 🤖\n\nOyun başlatmaq üçün /oyun yazın.\nMesaj reytinqinə baxmaq üçün /reyting [dövr] yazın.\nÖz rütbənizi görmək üçün /menim_rutbem yazın.")
+    await update.message.reply_text("Salam! 🤖\n\nQrupda əyləncə üçün əmrlər:\n`/oyun` - Doğruluq yoxsa Cəsarət?\n`/tapmaca` - Tapmaca oyunu\n\nStatistika üçün:\n`/reyting [dövr]`\n`/menim_rutbem`")
 
 async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.chat_data.get('game_active') or context.chat_data.get('players'):
@@ -177,6 +159,19 @@ async def leave_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Oyunçu sayı 2-dən az olduğu üçün oyun dayandırıldı.")
         context.chat_data.clear()
 
+async def tapmaca_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Yeni tapmaca oyununu başladır."""
+    if context.chat_data.get('riddle_active'):
+        await update.message.reply_text("Artıq aktiv bir tapmaca var! Zəhmət olmasa, əvvəlcə onu tapın.")
+        return
+    
+    chosen_riddle = random.choice(RIDDLES)
+    # Cavabları kiçik hərflərlə yadda saxlayırıq ki, yoxlama asan olsun
+    context.chat_data['riddle_answer'] = [ans.lower() for ans in chosen_riddle['answers']]
+    context.chat_data['riddle_active'] = True
+    
+    await update.message.reply_text(f"Tapmaca gəldi! 🕵️‍♂️\n\n**{chosen_riddle['riddle']}**", parse_mode='Markdown')
+
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
@@ -197,18 +192,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if user.id != target_user_id:
             await query.answer("⛔ Bu sənin sıran deyil!", show_alert=True)
             return
-        if action == 'truth':
-            question = random.choice(NORMAL_TRUTH_QUESTIONS)
-            response_text = f"📜 {user.first_name} üçün **Doğruluq**:\n\n> {question}"
-        else:
-            task = random.choice(NORMAL_DARE_TASKS)
-            response_text = f"🔥 {user.first_name} üçün **Cəsarət**:\n\n> {task}"
+        if action == 'truth': question = random.choice(NORMAL_TRUTH_QUESTIONS)
+        else: task = random.choice(NORMAL_DARE_TASKS)
+        response_text = f"📜 {user.first_name} üçün **Doğruluq**:\n\n> {question}" if action == 'truth' else f"🔥 {user.first_name} üçün **Cəsarət**:\n\n> {task}"
         command_suggestion = "\n\n*Cavab verildikdən sonra admin növbəti tura keçmək üçün /novbeti yazsın.*"
         await query.edit_message_text(text=response_text + command_suggestion, parse_mode='Markdown')
 
 async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id = update.message.chat_id
-    args = context.args
+    chat_id = update.message.chat_id; args = context.args
     if not args:
         await update.message.reply_text("Zəhmət olmasa, dövrü təyin edin:\n`/reyting gunluk`\n`/reyting heftelik`\n`/reyting ayliq`", parse_mode='Markdown')
         return
@@ -244,9 +235,7 @@ async def rating_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Reytinq cədvəlini hazırlayarkən bir xəta baş verdi.")
 
 async def my_rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.message.from_user.id
-    user_name = update.message.from_user.first_name
-    chat_id = update.message.chat_id
+    user_id, user_name, chat_id = update.message.from_user.id, update.message.from_user.first_name, update.message.chat_id
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
@@ -258,8 +247,7 @@ async def my_rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         total_count = result[0] if result else 0
         rank_title = get_rank_title(total_count)
         await update.message.reply_text(
-            f"Salam, {user_name}!\n\n"
-            f"Bu qrupdakı ümumi mesaj sayınız: **{total_count}**\n"
+            f"Salam, {user_name}!\n\nBu qrupdakı ümumi mesaj sayınız: **{total_count}**\n"
             f"Hazırkı rütbəniz: **{rank_title}**", parse_mode='Markdown')
     except Exception as e:
         logger.error(f"Şəxsi rütbə alınarkən xəta: {e}")
@@ -267,8 +255,18 @@ async def my_rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.from_user or not update.message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]: return
-    user = update.message.from_user
-    chat_id = update.message.chat_id
+    user, chat_id, text = update.message.from_user, update.message.chat_id, update.message.text
+    
+    # --- TAPMACA CAVABINI YOXLAMA MƏNTİQİ ---
+    if context.chat_data.get('riddle_active'):
+        correct_answers = context.chat_data.get('riddle_answer', [])
+        if text and text.strip().lower() in correct_answers:
+            await update.message.reply_text(f"Əhsən, [{user.first_name}](tg://user?id={user.id})! 🥳 Düzgün cavab tapıldı! ✅", parse_mode='Markdown')
+            del context.chat_data['riddle_active']
+            del context.chat_data['riddle_answer']
+            # Düzgün cavab da reytinqə sayılsın deyə funksiyanı dayandırmırıq
+
+    # --- MESAJ SAYMA MƏNTİQİ ---
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
@@ -282,10 +280,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def main() -> None:
     init_db()
-    
-    # Tokeni təhlükəsiz şəkildə Render-dən oxuyuruq
     TOKEN = os.environ.get("TELEGRAM_TOKEN")
-    
     if not TOKEN:
         print("XƏTA: TELEGRAM_TOKEN tapılmadı!")
         return
@@ -293,6 +288,7 @@ def main() -> None:
     application = Application.builder().token(TOKEN).build()
     group_filter = ~filters.ChatType.PRIVATE
     
+    # Bütün əmrlər
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("oyun", game_command, filters=group_filter))
     application.add_handler(CommandHandler("baslat", start_game_command, filters=group_filter))
@@ -302,7 +298,9 @@ def main() -> None:
     application.add_handler(CommandHandler("cix", leave_command, filters=group_filter))
     application.add_handler(CommandHandler("reyting", rating_command, filters=group_filter))
     application.add_handler(CommandHandler("menim_rutbem", my_rank_command, filters=group_filter))
+    application.add_handler(CommandHandler("tapmaca", tapmaca_command, filters=group_filter)) # YENİ ƏMR
 
+    # Bütün mesajları və hadisələri idarə edənlər
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND) & group_filter, handle_message))
     application.add_handler(MessageHandler(filters.StatusUpdate.ALL & group_filter, welcome_new_members))
     application.add_handler(MessageHandler(filters.ChatType.PRIVATE & (~filters.COMMAND), start_command))
