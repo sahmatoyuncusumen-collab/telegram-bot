@@ -35,19 +35,91 @@ def init_db():
 
 # --- MƏZMUN SİYAHILARI ---
 STORY_DATA = {
-    'start': {'text': "Siz qədim bir məbədin girişində dayanmısınız. Hava qaralır. İki yol var: soldakı mamırlı daşlarla örtülmüş cığır və sağdakı qaranlıq mağara girişi.",'choices': [{'text': "🌳 Sol cığırla get", 'goto': 'forest_path'}, {'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}]},
-    'forest_path': {'text': "Cığırla irəliləyərək üzərində qədim işarələr olan böyük bir daş qapıya çatırsınız. Qapı bağlıdır və ortasında böyük bir açar yeri var.",'choices': [{'text': "🔑 Qədim açarı istifadə et", 'goto': 'open_door', 'requires_item': 'qədim açar'}, {'text': " geri dön", 'goto': 'start'}]},
-    'cave_entrance': {'text': "Qaranlıq mağaraya daxil olursunuz. Divardan asılmış köhnə bir açar gözünüzə dəyir. Onu götürürsünüz.",'get_item': 'qədim açar','choices': [{'text': "Açarla birlikdə geri dön", 'goto': 'get_key'}]},
-    'get_key': {'text': "Artıq inventarınızda köhnə, paslı bir açar var. Bu, bəzi qapıları aça bilər. İndi nə edirsiniz?",'choices': [{'text': "🌳 Meşədəki qapını yoxla", 'goto': 'forest_path'}, {'text': "🧭 Məbədin girişinə qayıt", 'goto': 'start'}]},
-    'open_door': {'text': "Açarı istifadə edirsiniz. Qədim mexanizm işə düşür və daş qapı yavaşca açılır. İçəridə parlayan bir qılıncın olduğu xəzinə otağı görünür! Qılıncı götürürsünüz.",'get_item': 'əfsanəvi qılınc','choices': [{'text': "⚔️ Qılıncı götür!", 'goto': 'treasure_found'}]},
-    'treasure_found': {'text': "Əfsanəvi qılıncı əldə etdiniz! Macəranız uğurla başa çatdı. Qələbə! 🏆\n\nYeni macəra üçün məni bir qrupa əlavə edib /macera yazın.",'choices': []},
-    'go_back': {'text': "Açarınız olmadığı üçün geri qayıtmaqdan başqa çarəniz yoxdur. Məbədin girişinə qayıtdınız.",'choices': [{'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}]}
+    'start': {
+        'text': "Siz qədim bir məbədin girişində dayanmısınız. Hava qaralır. İki yol var: soldakı mamırlı daşlarla örtülmüş cığır və sağdakı qaranlıq mağara girişi.",
+        'choices': [
+            {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_entrance'},
+            {'text': "🦇 Qaranlıq mağaraya daxil ol", 'goto': 'cave_entrance'},
+            {'text': "🕯️ Ətrafda məşəl axtar", 'goto': 'find_torch'}
+        ]
+    },
+    'forest_entrance': {
+        'text': "Meşənin dərinliklərinə doğru irəliləyirsiniz. Qarşınıza keçilməz, dərin bir yarğan çıxır. O biri tərəfə keçmək üçün bir yola ehtiyacınız var.",
+        'choices': [
+            {'text': "🌉 İpi istifadə et", 'goto': 'chasm_crossed', 'requires_item': 'ip'},
+            {'text': " geri dön", 'goto': 'start'}
+        ]
+    },
+    'chasm_crossed': {
+        'text': "İpi möhkəm bir ağaca bağlayıb yarğanın o biri tərəfinə keçirsiniz. Orada, köhnə bir postamentin üzərində parlayan bir medalyon tapırsınız. Medalyonun üzərində qəribə simvollar var. Onu götürürsünüz.",
+        'get_item': 'qədim medalyon',
+        'choices': [
+            {'text': "Geri qayıt", 'goto': 'start'}
+        ]
+    },
+    'cave_entrance': {
+        'text': "Mağaranın girişi çox qaranlıqdır. İçəri görmək üçün bir işığa ehtiyacınız var.",
+        'choices': [
+            {'text': "🔥 Məşəli yandır", 'goto': 'cave_lit', 'requires_item': 'məşəl'},
+            {'text': "Koranə irəlilə", 'goto': 'cave_dark_fail'},
+            {'text': "Geri dön", 'goto': 'start'}
+        ]
+    },
+    'cave_dark_fail': {
+        'text': "Qaranlıqda irəliləməyə çalışırsınız, lakin ayağınız boşluğa düşür və dərin bir çuxura yıxılırsınız. Macəranız burada bitdi. 😔\n\nYeni macəra üçün /macera yazın.",
+        'choices': []
+    },
+    'cave_lit': {
+        'text': "Məşəli yandırırsınız və mağaranın divarları işıqlanır. Qarşınızda iki yol görürsünüz: birbaşa irəli gedən dar bir tunel və sağda köhnə taxta bir qapı.",
+        'choices': [
+            {'text': "Tunnelə gir", 'goto': 'tunnel'},
+            {'text': "🚪 Taxta qapını aç", 'goto': 'storage_room'}
+        ]
+    },
+    'storage_room': {
+        'text': "Taxta qapını açırsınız. Bura köhnə bir anbardır. Küncdə bir sandığın içində möhkəm bir ip tapırsınız. Onu götürürsünüz.",
+        'get_item': 'ip',
+        'choices': [
+            {'text': "Geri qayıt", 'goto': 'cave_lit'}
+        ]
+    },
+    'tunnel': {
+        'text': "Dar tunellə irəliləyirsiniz. Tunelin sonunda divarda üç fərqli rəngdə daş görürsünüz: Qırmızı, Mavi, Yaşıl. Görünür, bu bir tapmacadır. Hansı daşa basırsınız?",
+        'choices': [
+            {'text': "🔴 Qırmızı daşa bas", 'goto': 'puzzle_fail'},
+            {'text': "🔵 Mavi daşa bas", 'goto': 'puzzle_fail'},
+            {'text': "🟢 Yaşıl daşa bas", 'goto': 'puzzle_success'}
+        ]
+    },
+    'puzzle_fail': {
+        'text': "Səhv daşa basdınız! Yerdən oxlar çıxır və tələyə düşürsünüz. Macəranız burada bitdi. 😔\n\nYeni macəra üçün /macera yazın.",
+        'choices': []
+    },
+    'puzzle_success': {
+        'text': "Yaşıl daşa basırsınız. Divarda gizli bir bölmə açılır. İçəridə qədim bir sandıq var. Sandığı açırsınız və içindən parlayan bir qılınc tapırsınız!",
+        'get_item': 'əfsanəvi qılınc',
+        'choices': [
+            {'text': "Qılıncla məbədi tərk et", 'goto': 'win_ending'}
+        ]
+    },
+    'win_ending': {
+        'text': "Əfsanəvi qılıncı əldə etdiniz! Məbədin sirlərini açdınız və böyük bir xəzinə ilə geri döndünüz. Qələbə! 🏆\n\nYeni macəra üçün /macera yazın.",
+        'choices': []
+    },
+    'find_torch': {
+        'text': "Məbədin girişindəki daşların arasında yaxşı gizlədilmiş bir məşəl tapırsınız. İndi mağaraya girməyə hazırsınız.",
+        'get_item': 'məşəl',
+        'choices': [
+            {'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'},
+            {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_entrance'}
+        ]
+    }
 }
 QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},{'question': 'Hansı planet "Qırmızı Planet" kimi tanınır?', 'options': ['Venera', 'Mars', 'Yupiter', 'Saturn'], 'correct': 'Mars'},{'question': 'Dünyanın ən hündür dağı hansıdır?', 'options': ['K2', 'Everest', 'Makalu', 'Lhotse'], 'correct': 'Everest'},{'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'},{'question': 'Bir il ərzində neçə ayda 31 gün var?', 'options': ['6', '7', '8', '5'], 'correct': '7'},{'question': 'Leonardo da Vinçinin şah əsəri olan "Mona Liza" tablosu hazırda hansı muzeydə sərgilənir?', 'options': ['Britaniya Muzeyi', 'Vatikan Muzeyi', 'Ermitaj', 'Luvr Muzeyi'], 'correct': 'Luvr Muzeyi'}, {'question': 'İnsan bədənində ən böyük orqan hansıdır?', 'options': ['Qaraciyər', 'Dəri', 'Ağciyər', 'Beyin'], 'correct': 'Dəri'}, {'question': 'Dünyanın ən böyük okeanı hansıdır?', 'options': ['Atlantik okeanı', 'Hind okeanı', 'Sakit okean', 'Şimal Buzlu okeanı'], 'correct': 'Sakit okean'}, {'question': 'İkinci Dünya Müharibəsi hansı ildə başlayıb?', 'options': ['1941', '1945', '1939', '1914'], 'correct': '1939'}, {'question': 'Məşhur "Bohemian Rhapsody" mahnısı hansı rok qrupuna aiddir?', 'options': ['The Beatles', 'Led Zeppelin', 'Queen', 'Pink Floyd'], 'correct': 'Queen'}, {'question': 'Novruz bayramının əsas atributlarından olan səməni nəyin rəmzidir?', 'options': ['Odun', 'Suyun', 'Torpağın oyanışı', 'Küləyin'], 'correct': 'Torpağın oyanışı'}, {'question': 'Hansı kimyəvi element qızılın simvoludur?', 'options': ['Ag', 'Au', 'Fe', 'Cu'], 'correct': 'Au'}, {'question': 'İlk mobil telefon zəngi hansı ildə edilib?', 'options': ['1985', '1991', '1973', '1969'], 'correct': '1973'}]
 RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']},{'riddle': 'Gecə yaranar, səhər itər. Bu nədir?', 'answers': ['yuxu', 'röya']},{'riddle': 'Bir qalaçam var, içi dolu qızılca. Bu nədir?', 'answers': ['nar']},{'riddle': 'Nə qədər çox olsa, o qədər az görərsən. Bu nədir?', 'answers': ['qaranlıq']},{'riddle': 'Mənim şəhərlərim var, amma evim yoxdur. Meşələrim var, amma ağacım yoxdur. Sularım var, amma balığım yoxdur. Mən nəyəm?', 'answers': ['xəritə']},{'riddle': 'Hər zaman gəlir, amma heç vaxt gəlib çatmır. Bu nədir?', 'answers': ['sabah']},{'riddle': 'Hər kəsin sahib olduğu, amma heç kimin itirə bilmədiyi şey nədir?', 'answers': ['kölgə']}]
 NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?","Heç kimin bilmədiyi bir bacarığın varmı?","Bu qrupda ən çox güvəndiyin insan kimdir?","Bir günlük görünməz olsaydın nə edərdin?","Ən çox sevdiyin film hansıdır və niyə?","Ən utancverici ləqəbin nə olub?","Valideynlərinə dediyin ən böyük yalan nə olub?","Heç hovuzun içinə kiçik tualetini etmisən?","Telefonundakı ən son şəkil nədir? (Düzünü de!)","Əgər heyvan olsaydın, hansı heyvan olardın və niyə?","İndiyə qədər aldığın ən pis hədiyyə nə olub?","Heç kimə demədiyin bir sirrin nədir?","Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?","Ən qəribə yemək vərdişin nədir?","Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?","Səni nə ağlada bilər?","Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"]
 NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu.","Əlifbanı sondan əvvələ doğru sürətli şəkildə say.","Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.","Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.","Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.","Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.","Qrupa telefonunun ekran şəklini (screenshot) göndər.","Bir qaşıq qəhvə və ya duz ye.","Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.","Ən çox zəhlən gedən mahnını qrupa göndər.","Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.","Qrupdan birinə zəng et və ona qəribə bir lətifə danış.","İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.","Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.","Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."]
-RULES_TEXT = "📜 **Oyun Botunun Qaydaları** 📜\n\n🎲 **Doğruluq yoxsa Cəsarət?**\n- `/oyun`: Yeni oyun üçün qeydiyyat başladır...\n\n💡 **Tapmaca Oyunu**\n- `/tapmaca`: Təsadüfi bir tapmaca göndərir...\n\n🧠 **Viktorina Oyunu**\n- `/viktorina`: 3 can ilə yeni bir viktorina sualı göndərir...\n\n🗺️ **Macəra Oyunu**\n- `/macera`: Fərdi macəra oyunu başladır.\n\n📊 **Reytinq Sistemi**\n- `/reyting [dövr]`: Mesaj statistikasını göstərir...\n- `/menim_rutbem`: Şəxsi rütbənizi göstərir."
+RULES_TEXT = "📜 **Oyun Botunun Qaydaları** 📜\n\n🎲 **Doğruluq yoxsa Cəsarət?**\n- `/oyun`: Yeni oyun üçün qeydiyyat başladır...\n\n💡 **Tapmaca Oyunu**\n- `/tapmaca`: Təsadüfi bir tapmaca göndərir...\n\n🧠 **Viktorina Oyunu**\n- `/viktorina`: 3 can ilə yeni bir viktorina sualı göndərir...\n\n🗺️ **Macəra Oyunu**\n- `/macera`: Fərdi macəra oyunu başladır.\n\n📊 **Reytinq Sistemi**\n- `/reyting [dövr]`: Mesaj statistikasını göstərir...\n- `/menim_rutbem`: Şəxsi mesaj sayınızı və rütbənizi göstərir."
 
 def get_rank_title(count: int) -> str:
     if count <= 100: return "Yeni Üzv 👶"
