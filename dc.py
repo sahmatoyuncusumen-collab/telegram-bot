@@ -119,7 +119,7 @@ QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': 
 RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']},{'riddle': 'Gecə yaranar, səhər itər. Bu nədir?', 'answers': ['yuxu', 'röya']},{'riddle': 'Bir qalaçam var, içi dolu qızılca. Bu nədir?', 'answers': ['nar']},{'riddle': 'Nə qədər çox olsa, o qədər az görərsən. Bu nədir?', 'answers': ['qaranlıq']},{'riddle': 'Mənim şəhərlərim var, amma evim yoxdur. Meşələrim var, amma ağacım yoxdur. Sularım var, amma balığım yoxdur. Mən nəyəm?', 'answers': ['xəritə']},{'riddle': 'Hər zaman gəlir, amma heç vaxt gəlib çatmır. Bu nədir?', 'answers': ['sabah']},{'riddle': 'Hər kəsin sahib olduğu, amma heç kimin itirə bilmədiyi şey nədir?', 'answers': ['kölgə']}]
 NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?","Heç kimin bilmədiyi bir bacarığın varmı?","Bu qrupda ən çox güvəndiyin insan kimdir?","Bir günlük görünməz olsaydın nə edərdin?","Ən çox sevdiyin film hansıdır və niyə?","Ən utancverici ləqəbin nə olub?","Valideynlərinə dediyin ən böyük yalan nə olub?","Heç hovuzun içinə kiçik tualetini etmisən?","Telefonundakı ən son şəkil nədir? (Düzünü de!)","Əgər heyvan olsaydın, hansı heyvan olardın və niyə?","İndiyə qədər aldığın ən pis hədiyyə nə olub?","Heç kimə demədiyin bir sirrin nədir?","Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?","Ən qəribə yemək vərdişin nədir?","Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?","Səni nə ağlada bilər?","Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"]
 NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu.","Əlifbanı sondan əvvələ doğru sürətli şəkildə say.","Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.","Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.","Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.","Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.","Qrupa telefonunun ekran şəklini (screenshot) göndər.","Bir qaşıq qəhvə və ya duz ye.","Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.","Ən çox zəhlən gedən mahnını qrupa göndər.","Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.","Qrupdan birinə zəng et və ona qəribə bir lətifə danış.","İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.","Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.","Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."]
-RULES_TEXT = "📜 **Oyun Botunun Qaydaları** 📜\n\n🎲 **Doğruluq yoxsa Cəsarət?**\n- `/oyun`: Yeni oyun üçün qeydiyyat başladır...\n\n💡 **Tapmaca Oyunu**\n- `/tapmaca`: Təsadüfi bir tapmaca göndərir...\n\n🧠 **Viktorina Oyunu**\n- `/viktorina`: 3 can ilə yeni bir viktorina sualı göndərir...\n\n🗺️ **Macəra Oyunu**\n- `/macera`: Fərdi macəra oyunu başladır.\n\n📊 **Reytinq Sistemi**\n- `/reyting [dövr]`: Mesaj statistikasını göstərir...\n- `/menim_rutbem`: Şəxsi mesaj sayınızı və rütbənizi göstərir."
+RULES_TEXT = "📜 **Oyun Botunun Qaydaları** 📜\n\n🎲 **Doğruluq yoxsa Cəsarət?**\n- `/oyun`: Yeni oyun üçün qeydiyyat başladır.\n- `/baslat`: (Admin) Oyunu başladır.\n- `/novbeti`: (Admin) Sıranı dəyişir.\n- `/dayandir`: (Admin) Oyunu bitirir.\n\n💡 **Tapmaca Oyunu**\n- `/tapmaca`: Təsadüfi tapmaca göndərir.\n\n🧠 **Viktorina Oyunu**\n- `/viktorina`: 3 can ilə viktorina sualı göndərir.\n\n🗺️ **Macəra Oyunu**\n- `/macera`: Fərdi macəra oyunu başladır.\n\n📊 **Reytinq Sistemi**\n- `/reyting [dövr]`: Mesaj statistikasını göstərir.\n- `/menim_rutbem`: Şəxsi rütbənizi göstərir."
 
 def get_rank_title(count: int) -> str:
     if count <= 100: return "Yeni Üzv 👶"
@@ -151,10 +151,7 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    start_text = "Salam! Mən Oyun Botuyam. 🤖\nBütün oyunların qaydalarına baxmaq üçün düyməyə bas və ya əmrləri birbaşa yaz!"
-    await update.message.reply_text(start_text, reply_markup=reply_markup)
+    await start_command_menu(update, context, is_edit=False)
 async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(RULES_TEXT, parse_mode='Markdown')
 async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -246,16 +243,10 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
     if data == "back_to_start_menu":
-        keyboard = [[InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        start_text = "Salam! Mən Oyun Botuyam. 🤖\nBütün oyunların qaydalarına baxmaq üçün düyməyə bas və ya əmrləri birbaşa yaz!"
-        await query.edit_message_text(text=start_text, reply_markup=reply_markup); return
+        await start_command_menu(query, context, is_edit=True)
+        return
     if data.startswith("start_info_"):
-        command_name = data.split('_')[-1]
-        if command_name == 'qaydalar':
-            keyboard = [[InlineKeyboardButton("⬅️ Əsas Menyuya Geri", callback_data="back_to_start_menu")]]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            await query.edit_message_text(text=RULES_TEXT, parse_mode='Markdown', reply_markup=reply_markup)
+        await start_command_menu_handler(query, context)
         return
     if data.startswith("rpg_"):
         owner_id = context.chat_data.get('rpg_owner_id')
@@ -376,7 +367,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     (chat_id, user.id, user.first_name, datetime.datetime.now(datetime.timezone.utc)))
         conn.commit(); cur.close(); conn.close()
     except Exception as e: logger.error(f"Mesajı bazaya yazarkən xəta: {e}")
-
+async def start_command_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, is_edit: bool = False):
+    """Generates and sends or edits the start menu."""
+    keyboard = [[InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    start_text = "Salam! Mən Oyun Botuyam. 🤖\nBütün oyunların qaydalarına baxmaq üçün düyməyə bas və ya əmrləri birbaşa yaz!"
+    
+    if is_edit:
+        await update.edit_message_text(text=start_text, reply_markup=reply_markup)
+    else:
+        await update.message.reply_text(text=start_text, reply_markup=reply_markup)
+async def start_command_menu_handler(query, context):
+    command_name = query.data.split('_')[-1]
+    if command_name == 'qaydalar':
+        keyboard = [[InlineKeyboardButton("⬅️ Əsas Menyuya Geri", callback_data="back_to_start_menu")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.edit_message_text(text=RULES_TEXT, parse_mode='Markdown', reply_markup=reply_markup)
 def main() -> None:
     run_pre_flight_checks()
     init_db()
