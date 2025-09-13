@@ -40,6 +40,7 @@ RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədi
 NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?","Heç kimin bilmədiyi bir bacarığın varmı?","Bu qrupda ən çox güvəndiyin insan kimdir?","Bir günlük görünməz olsaydın nə edərdin?","Ən çox sevdiyin film hansıdır və niyə?","Ən utancverici ləqəbin nə olub?","Valideynlərinə dediyin ən böyük yalan nə olub?","Heç hovuzun içinə kiçik tualetini etmisən?","Telefonundakı ən son şəkil nədir? (Düzünü de!)","Əgər heyvan olsaydın, hansı heyvan olardın və niyə?","İndiyə qədər aldığın ən pis hədiyyə nə olub?","Heç kimə demədiyin bir sirrin nədir?","Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?","Ən qəribə yemək vərdişin nədir?","Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?","Səni nə ağlada bilər?","Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"]
 NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu.","Əlifbanı sondan əvvələ doğru sürətli şəkildə say.","Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.","Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.","Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.","Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.","Qrupa telefonunun ekran şəklini (screenshot) göndər.","Bir qaşıq qəhvə və ya duz ye.","Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.","Ən çox zəhlən gedən mahnını qrupa göndər.","Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.","Qrupdan birinə zəng et və ona qəribə bir lətifə danış.","İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.","Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.","Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."]
 RULES_TEXT = "📜 **Oyun Botunun Qaydaları** 📜\n\n🎲 **Doğruluq yoxsa Cəsarət?**\n- `/oyun`: Yeni oyun üçün qeydiyyat başladır.\n- `/baslat`: (Admin) Oyunu başladır.\n- `/novbeti`: (Admin) Sıranı dəyişir.\n- `/dayandir`: (Admin) Oyunu bitirir.\n\n💡 **Tapmaca Oyunu**\n- `/tapmaca`: Təsadüfi tapmaca göndərir.\n\n🧠 **Viktorina Oyunu**\n- `/viktorina`: 3 can ilə viktorina sualı göndərir.\n\n🗺️ **Macəra Oyunu**\n- `/macera`: Fərdi macəra oyunu başladır.\n\n📊 **Reytinq Sistemi**\n- `/reyting [dövr]`: Mesaj statistikasını göstərir.\n- `/menim_rutbem`: Şəxsi rütbənizi göstərir."
+ABOUT_TEXT = "🤖 **Bot Haqqında Məlumat** 🤖\n\nMən Azərbaycan dilində müxtəlif oyunlar təklif edən bir əyləncə botuyam.\n\nMənimlə aşağıdakı oyunları oynaya bilərsiniz:\n- Doğruluq yoxsa Cəsarət?\n- Tapmaca\n- Viktorina (Quiz)\n- Mətn-əsaslı Macəra\n\nHəmçinin, qruplardakı aktivliyi izləyən reytinq sistemim var.\n\nƏyləncəli vaxt keçirməyiniz diləyi ilə!"
 
 def get_rank_title(count: int) -> str:
     if count <= 100: return "Yeni Üzv 👶"
@@ -71,6 +72,12 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.message.from_user
+    if context.args and len(context.args) > 0 and context.args[0] == 'macera':
+        context.user_data.clear()
+        context.user_data['rpg_inventory'] = set()
+        await update.message.reply_text("Sənin şəxsi macəran başlayır! ⚔️")
+        await show_rpg_node(update, context, 'start'); return
     keyboard = [
         [InlineKeyboardButton("ℹ️ Bot Haqqında Məlumat", callback_data="start_info_about")],
         [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")],
@@ -189,7 +196,7 @@ async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
-    
+
     if data.startswith("start_info_"):
         command_name = data.split('_')[-1]
         if command_name == 'qaydalar':
@@ -301,6 +308,7 @@ def main() -> None:
     application = Application.builder().token(TOKEN).build()
     group_filter = ~filters.ChatType.PRIVATE
     private_filter = filters.ChatType.PRIVATE
+    
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("qaydalar", qaydalar_command))
     application.add_handler(CommandHandler("haqqinda", haqqinda_command))
