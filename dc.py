@@ -34,14 +34,15 @@ def init_db():
         print(f"Baza yaradılarkən xəta: {e}")
 
 # --- MƏZMUN SİYAHILARI ---
-STORY_DATA = {'start': {'text': "Siz qədim bir məbədin girişində dayanmısınız. Hava qaralır. İki yol var: soldakı mamırlı daşlarla örtülmüş cığır və sağdakı qaranlıq mağara girişi.",'choices': [{'text': "🌳 Sol cığırla get", 'goto': 'forest_path'}, {'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}]}, 'forest_path': {'text': "Cığırla irəliləyərək üzərində qədim işarələr olan böyük bir daş qapıya çatırsınız. Qapı bağlıdır və ortasında böyük bir açar yeri var.",'choices': [{'text': "🔑 Qədim açarı istifadə et", 'goto': 'open_door', 'requires_item': 'qədim açar'}, {'text': " geri dön", 'goto': 'start'}]}, 'cave_entrance': {'text': "Qaranlıq mağaraya daxil olursunuz. Divardan asılmış köhnə bir açar gözünüzə dəyir. Onu götürürsünüz.",'get_item': 'qədim açar','choices': [{'text': "Açarla birlikdə geri dön", 'goto': 'get_key'}]}, 'get_key': {'text': "Artıq inventarınızda köhnə, paslı bir açar var. Bu, bəzi qapıları aça bilər. İndi nə edirsiniz?",'choices': [{'text': "🌳 Meşədəki qapını yoxla", 'goto': 'forest_path'}, {'text': "🧭 Məbədin girişinə qayıt", 'goto': 'start'}]}, 'open_door': {'text': "Açarı istifadə edirsiniz. Qədim mexanizm işə düşür və daş qapı yavaşca açılır. İçəridə parlayan bir qılıncın olduğu xəzinə otağı görünür! Qılıncı götürürsünüz.",'get_item': 'əfsanəvi qılınc','choices': [{'text': "⚔️ Qılıncı götür!", 'goto': 'treasure_found'}]}, 'treasure_found': {'text': "Əfsanəvi qılıncı əldə etdiniz! Macəranız uğurla başa çatdı. Qələbə! 🏆\n\nYeni macəra üçün /macera yazın.",'choices': []}, 'go_back': {'text': "Açarınız olmadığı üçün geri qayıtmaqdan başqa çarəniz yoxdur. Məbədin girişinə qayıtdınız.",'choices': [{'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}, {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_path'}]}}
-QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},{'question': 'Hansı planet "Qırmızı Planet" kimi tanınır?', 'options': ['Venera', 'Mars', 'Yupiter', 'Saturn'], 'correct': 'Mars'},{'question': 'Dünyanın ən hündür dağı hansıdır?', 'options': ['K2', 'Everest', 'Makalu', 'Lhotse'], 'correct': 'Everest'},{'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'},{'question': 'Bir il ərzində neçə ayda 31 gün var?', 'options': ['6', '7', '8', '5'], 'correct': '7'},{'question': 'Leonardo da Vinçinin şah əsəri olan "Mona Liza" tablosu hazırda hansı muzeydə sərgilənir?', 'options': ['Britaniya Muzeyi', 'Vatikan Muzeyi', 'Ermitaj', 'Luvr Muzeyi'], 'correct': 'Luvr Muzeyi'}, {'question': 'İnsan bədənində ən böyük orqan hansıdır?', 'options': ['Qaraciyər', 'Dəri', 'Ağciyər', 'Beyin'], 'correct': 'Dəri'}, {'question': 'Dünyanın ən böyük okeanı hansıdır?', 'options': ['Atlantik okeanı', 'Hind okeanı', 'Sakit okean', 'Şimal Buzlu okeanı'], 'correct': 'Sakit okean'}, {'question': 'İkinci Dünya Müharibəsi hansı ildə başlayıb?', 'options': ['1941', '1945', '1939', '1914'], 'correct': '1939'}, {'question': 'Məşhur "Bohemian Rhapsody" mahnısı hansı rok qrupuna aiddir?', 'options': ['The Beatles', 'Led Zeppelin', 'Queen', 'Pink Floyd'], 'correct': 'Queen'}, {'question': 'Novruz bayramının əsas atributlarından olan səməni nəyin rəmzidir?', 'options': ['Odun', 'Suyun', 'Torpağın oyanışı', 'Küləyin'], 'correct': 'Torpağın oyanışı'}, {'question': 'Hansı kimyəvi element qızılın simvoludur?', 'options': ['Ag', 'Au', 'Fe', 'Cu'], 'correct': 'Au'}, {'question': 'İlk mobil telefon zəngi hansı ildə edilib?', 'options': ['1985', '1991', '1973', '1969'], 'correct': '1973'}]
-RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']},{'riddle': 'Gecə yaranar, səhər itər. Bu nədir?', 'answers': ['yuxu', 'röya']},{'riddle': 'Bir qalaçam var, içi dolu qızılca. Bu nədir?', 'answers': ['nar']},{'riddle': 'Nə qədər çox olsa, o qədər az görərsən. Bu nədir?', 'answers': ['qaranlıq']},{'riddle': 'Mənim şəhərlərim var, amma evim yoxdur. Meşələrim var, amma ağacım yoxdur. Sularım var, amma balığım yoxdur. Mən nəyəm?', 'answers': ['xəritə']},{'riddle': 'Hər zaman gəlir, amma heç vaxt gəlib çatmır. Bu nədir?', 'answers': ['sabah']},{'riddle': 'Hər kəsin sahib olduğu, amma heç kimin itirə bilmədiyi şey nədir?', 'answers': ['kölgə']}]
-NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?","Heç kimin bilmədiyi bir bacarığın varmı?","Bu qrupda ən çox güvəndiyin insan kimdir?","Bir günlük görünməz olsaydın nə edərdin?","Ən çox sevdiyin film hansıdır və niyə?","Ən utancverici ləqəbin nə olub?","Valideynlərinə dediyin ən böyük yalan nə olub?","Heç hovuzun içinə kiçik tualetini etmisən?","Telefonundakı ən son şəkil nədir? (Düzünü de!)","Əgər heyvan olsaydın, hansı heyvan olardın və niyə?","İndiyə qədər aldığın ən pis hədiyyə nə olub?","Heç kimə demədiyin bir sirrin nədir?","Qrupdakı birinin yerində olmaq istəsəydin, bu kim olardı?","Ən qəribə yemək vərdişin nədir?","Heç sosial media profilini gizlicə izlədiyin (stalk etdiyin) biri olub?","Səni nə ağlada bilər?","Bir günə 1 milyon dollar xərcləməli olsaydın, nəyə xərcləyərdin?"]
-NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu.","Əlifbanı sondan əvvələ doğru sürətli şəkildə say.","Otağındakı ən qəribə əşyanın şəklini çəkib qrupa göndər.","Telefonunun klaviaturasını 10 dəqiqəlik tərs düz (sağdan sola) istifadə et.","Qrupdakı birinə icazə ver, sənin üçün İnstagram-da bir status paylaşsın.","Ən yaxın pəncərədən çölə \"Mən robotam!\" deyə qışqır.","Qrupa telefonunun ekran şəklini (screenshot) göndər.","Bir qaşıq qəhvə və ya duz ye.","Növbəti 3 dəqiqə ərzində ancaq şeir dili ilə danış.","Ən çox zəhlən gedən mahnını qrupa göndər.","Gözlərin bağlı halda öz portretini çəkməyə çalış və qrupa at.","Qrupdan birinə zəng et və ona qəribə bir lətifə danış.","İki fərqli içkini (məsələn, kola və süd) qarışdırıb bir qurtum iç.","Hər kəsin görə biləcəyi bir yerdə 30 saniyə robot kimi rəqs et.","Ən son aldığın mesaja \"OK, ancaq əvvəlcə kartofları soy\" deyə cavab yaz."]
-RULES_TEXT = "📜 **Oyun Botunun Qaydaları** 📜\n\n🎲 **Doğruluq yoxsa Cəsarət?**\n- `/oyun`: Yeni oyun üçün qeydiyyat başladır.\n- `/baslat`: (Admin) Oyunu başladır.\n- `/novbeti`: (Admin) Sıranı dəyişir.\n- `/dayandir`: (Admin) Oyunu bitirir.\n\n💡 **Tapmaca Oyunu**\n- `/tapmaca`: Təsadüfi tapmaca göndərir.\n\n🧠 **Viktorina Oyunu**\n- `/viktorina`: 3 can ilə viktorina sualı göndərir.\n\n🗺️ **Macəra Oyunu**\n- `/macera`: Fərdi macəra oyunu başladır.\n\n📊 **Reytinq Sistemi**\n- `/reyting [dövr]`: Mesaj statistikasını göstərir.\n- `/menim_rutbem`: Şəxsi rütbənizi göstərir."
 ABOUT_TEXT = "🤖 **Bot Haqqında Məlumat** 🤖\n\nMən Azərbaycan dilində müxtəlif oyunlar təklif edən bir əyləncə botuyam.\n\nMənimlə aşağıdakı oyunları oynaya bilərsiniz:\n- Doğruluq yoxsa Cəsarət?\n- Tapmaca\n- Viktorina (Quiz)\n- Mətn-əsaslı Macəra\n\nHəmçinin, qruplardakı aktivliyi izləyən reytinq sistemim var.\n\nƏyləncəli vaxt keçirməyiniz diləyi ilə!"
+RULES_TEXT = "📜 **Oyun Botunun Qaydaları** 📜\n\n(Bura bütün oyunların qaydaları əlavə ediləcək...)"
+STORY_DATA = {'start': {'text': "Siz qədim bir məbədin girişində dayanmısınız. Hava qaralır. İki yol var: soldakı mamırlı daşlarla örtülmüş cığır və sağdakı qaranlıq mağara girişi.",'choices': [{'text': "🌳 Sol cığırla get", 'goto': 'forest_path'}, {'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}]}, 'forest_path': {'text': "Cığırla irəliləyərək üzərində qədim işarələr olan böyük bir daş qapıya çatırsınız. Qapı bağlıdır və ortasında böyük bir açar yeri var.",'choices': [{'text': "🔑 Qədim açarı istifadə et", 'goto': 'open_door', 'requires_item': 'qədim açar'}, {'text': " geri dön", 'goto': 'start'}]}, 'cave_entrance': {'text': "Qaranlıq mağaraya daxil olursunuz. Divardan asılmış köhnə bir açar gözünüzə dəyir. Onu götürürsünüz.",'get_item': 'qədim açar','choices': [{'text': "Açarla birlikdə geri dön", 'goto': 'get_key'}]}, 'get_key': {'text': "Artıq inventarınızda köhnə, paslı bir açar var. Bu, bəzi qapıları aça bilər. İndi nə edirsiniz?",'choices': [{'text': "🌳 Meşədəki qapını yoxla", 'goto': 'forest_path'}, {'text': "🧭 Məbədin girişinə qayıt", 'goto': 'start'}]}, 'open_door': {'text': "Açarı istifadə edirsiniz. Qədim mexanizm işə düşür və daş qapı yavaşca açılır. İçəridə parlayan bir qılıncın olduğu xəzinə otağı görünür! Qılıncı götürürsünüz.",'get_item': 'əfsanəvi qılınc','choices': [{'text': "⚔️ Qılıncı götür!", 'goto': 'treasure_found'}]}, 'treasure_found': {'text': "Əfsanəvi qılıncı əldə etdiniz! Macəranız uğurla başa çatdı. Qələbə! 🏆\n\nYeni macəra üçün /macera yazın.",'choices': []}, 'go_back': {'text': "Açarınız olmadığı üçün geri qayıtmaqdan başqa çarəniz yoxdur. Məbədin girişinə qayıtdınız.",'choices': [{'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}, {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_path'}]}}
+QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'}]
+RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']}]
+NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?"]
+NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir."]
 
+# --- ƏSAS FUNKSİYALAR ---
 def get_rank_title(count: int) -> str:
     if count <= 100: return "Yeni Üzv 👶"
     elif count <= 500: return "Daimi Sakin 👨‍💻"
@@ -71,15 +72,12 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[InlineKeyboardButton("Doğruluq ✅", callback_data=f"game_truth_{user_id}"), InlineKeyboardButton("Cəsarət 😈", callback_data=f"game_dare_{user_id}")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
-
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.message.from_user
     if context.args and len(context.args) > 0 and context.args[0] == 'macera':
-        context.user_data.clear()
         context.user_data['rpg_inventory'] = set()
         await update.message.reply_text("Sənin şəxsi macəran başlayır! ⚔️")
         await show_rpg_node(update, context, 'start'); return
-
     keyboard = [
         [InlineKeyboardButton("ℹ️ Bot Haqqında Məlumat", callback_data="start_info_about")],
         [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")],
@@ -89,23 +87,18 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     start_text = "Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin bölməni seç:"
     await update.message.reply_text(start_text, reply_markup=reply_markup)
-
 async def private_game_warning(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("⛔ Bu oyun yalnız qruplarda oynanıla bilər. Zəhmət olmasa, məni bir qrupa əlavə edib orada yenidən cəhd edin.")
-
 async def haqqinda_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(ABOUT_TEXT, parse_mode='Markdown')
-
 async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(RULES_TEXT, parse_mode='Markdown')
-
 async def macera_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     bot_username = (await context.bot.get_me()).username
     start_link = f"https://t.me/{bot_username}?start=macera"
     keyboard = [[InlineKeyboardButton("⚔️ Macəranı Şəxsidə Başlat", url=start_link)]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text("Hər kəs öz şəxsi macərasını yaşaya bilər!\n\nAşağıdakı düyməyə basaraq mənimlə şəxsi söhbətə başla və öz fərdi oyununu oyna:", reply_markup=reply_markup)
-
 async def show_rpg_node(update: Update, context: ContextTypes.DEFAULT_TYPE, node_key: str):
     message = update.message if update.message else update.callback_query.message
     node = STORY_DATA.get(node_key)
@@ -203,7 +196,7 @@ async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
-    
+
     if data.startswith("start_info_"):
         command_name = data.split('_')[-1]
         if command_name == 'qaydalar':
@@ -320,6 +313,7 @@ def main() -> None:
     application.add_handler(CommandHandler("qaydalar", qaydalar_command))
     application.add_handler(CommandHandler("haqqinda", haqqinda_command))
     
+    # Qrup əmrləri
     application.add_handler(CommandHandler("oyun", game_command, filters=group_filter))
     application.add_handler(CommandHandler("baslat", start_game_command, filters=group_filter))
     application.add_handler(CommandHandler("novbeti", next_turn_command, filters=group_filter))
@@ -332,9 +326,11 @@ def main() -> None:
     application.add_handler(CommandHandler("viktorina", viktorina_command, filters=group_filter))
     application.add_handler(CommandHandler("macera", macera_command, filters=group_filter))
     
+    # Şəxsi söhbət üçün xəbərdarlıq
     game_warning_commands = ["oyun", "tapmaca", "viktorina", "reyting", "menim_rutbem", "baslat", "novbeti", "dayandir", "qosul", "cix"]
     application.add_handler(CommandHandler(game_warning_commands, private_game_warning, filters=private_filter))
     
+    # Handler-lər
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND) & group_filter, handle_message))
     application.add_handler(MessageHandler(filters.StatusUpdate.ALL & group_filter, welcome_new_members))
     application.add_handler(MessageHandler(filters.ChatType.PRIVATE & (~filters.COMMAND), start_command))
