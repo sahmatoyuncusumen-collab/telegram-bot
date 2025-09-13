@@ -34,13 +34,43 @@ def init_db():
         print(f"Baza yaradılarkən xəta: {e}")
 
 # --- MƏZMUN SİYAHILARI ---
-ABOUT_TEXT = "🤖 **Bot Haqqında Məlumat** 🤖\n\nMən Azərbaycan dilində müxtəlif oyunlar təklif edən bir əyləncə botuyam.\n\nMənimlə aşağıdakı oyunları oynaya bilərsiniz:\n- Doğruluq yoxsa Cəsarət?\n- Tapmaca\n- Viktorina (Quiz)\n- Mətn-əsaslı Macəra\n\nHəmçinin, qruplardakı aktivliyi izləyən reytinq sistemim var.\n\nƏyləncəli vaxt keçirməyiniz diləyi ilə!"
-RULES_TEXT = "📜 **Oyun Botunun Qaydaları** 📜\n\n(Bura bütün oyunların qaydaları əlavə ediləcək...)"
-STORY_DATA = {'start': {'text': "Siz qədim bir məbədin girişində dayanmısınız. Hava qaralır. İki yol var: soldakı mamırlı daşlarla örtülmüş cığır və sağdakı qaranlıq mağara girişi.",'choices': [{'text': "🌳 Sol cığırla get", 'goto': 'forest_path'}, {'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}]}, 'forest_path': {'text': "Cığırla irəliləyərək üzərində qədim işarələr olan böyük bir daş qapıya çatırsınız. Qapı bağlıdır və ortasında böyük bir açar yeri var.",'choices': [{'text': "🔑 Qədim açarı istifadə et", 'goto': 'open_door', 'requires_item': 'qədim açar'}, {'text': " geri dön", 'goto': 'start'}]}, 'cave_entrance': {'text': "Qaranlıq mağaraya daxil olursunuz. Divardan asılmış köhnə bir açar gözünüzə dəyir. Onu götürürsünüz.",'get_item': 'qədim açar','choices': [{'text': "Açarla birlikdə geri dön", 'goto': 'get_key'}]}, 'get_key': {'text': "Artıq inventarınızda köhnə, paslı bir açar var. Bu, bəzi qapıları aça bilər. İndi nə edirsiniz?",'choices': [{'text': "🌳 Meşədəki qapını yoxla", 'goto': 'forest_path'}, {'text': "🧭 Məbədin girişinə qayıt", 'goto': 'start'}]}, 'open_door': {'text': "Açarı istifadə edirsiniz. Qədim mexanizm işə düşür və daş qapı yavaşca açılır. İçəridə parlayan bir qılıncın olduğu xəzinə otağı görünür! Qılıncı götürürsünüz.",'get_item': 'əfsanəvi qılınc','choices': [{'text': "⚔️ Qılıncı götür!", 'goto': 'treasure_found'}]}, 'treasure_found': {'text': "Əfsanəvi qılıncı əldə etdiniz! Macəranız uğurla başa çatdı. Qələbə! 🏆\n\nYeni macəra üçün /macera yazın.",'choices': []}, 'go_back': {'text': "Açarınız olmadığı üçün geri qayıtmaqdan başqa çarəniz yoxdur. Məbədin girişinə qayıtdınız.",'choices': [{'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}, {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_path'}]}}
-QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'}]
-RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']}]
-NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?"]
-NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir."]
+ABOUT_TEXT = """🤖 **Bot Haqqında Məlumat** 🤖
+
+Mən Azərbaycan dilində müxtəlif oyunlar təklif edən bir əyləncə botuyam.
+
+Mənimlə aşağıdakı oyunları oynaya bilərsiniz:
+- Doğruluq yoxsa Cəsarət?
+- Tapmaca
+- Viktorina (Quiz)
+- Mətn-əsaslı Macəra
+
+Həmçinin, qruplardakı aktivliyi izləyən reytinq sistemim var. Əyləncəli vaxt keçirməyiniz diləyi ilə!
+"""
+RULES_TEXT = """📜 **Oyun Botunun Qaydaları** 📜
+
+🎲 **Doğruluq yoxsa Cəsarət?**
+- `/oyun`: Yeni oyun üçün qeydiyyat başladır.
+- `/baslat`: (Admin) Oyunu başladır.
+- `/novbeti`: (Admin) Sıranı dəyişir.
+- `/dayandir`: (Admin) Oyunu bitirir.
+
+💡 **Tapmaca Oyunu**
+- `/tapmaca`: Təsadüfi tapmaca göndərir.
+
+🧠 **Viktorina Oyunu**
+- `/viktorina`: 3 can ilə viktorina sualı göndərir.
+
+🗺️ **Macəra Oyunu**
+- `/macera`: Hər kəsin fərdi oynaması üçün şəxsi söhbətə dəvət göndərir.
+
+📊 **Reytinq Sistemi**
+- `/reyting [dövr]`: Mesaj statistikasını göstərir.
+- `/menim_rutbem`: Şəxsi rütbənizi göstərir."""
+STORY_DATA = {'start': {'text': "Siz qədim bir məbədin girişində dayanmısınız. Hava qaralır. İki yol var: soldakı mamırlı daşlarla örtülmüş cığır və sağdakı qaranlıq mağara girişi.",'choices': [{'text': "🌳 Sol cığırla get", 'goto': 'forest_path'}, {'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}]}, 'forest_path': {'text': "Cığırla irəliləyərək üzərində qədim işarələr olan böyük bir daş qapıya çatırsınız. Qapı bağlıdır və ortasında böyük bir açar yeri var.",'choices': [{'text': "🔑 Qədim açarı istifadə et", 'goto': 'open_door', 'requires_item': 'qədim açar'}, {'text': " geri dön", 'goto': 'start'}]}, 'cave_entrance': {'text': "Qaranlıq mağaraya daxil olursunuz. Divardan asılmış köhnə bir açar gözünüzə dəyir. Onu götürürsünüz.",'get_item': 'qədim açar','choices': [{'text': "Açarla birlikdə geri dön", 'goto': 'get_key'}]}, 'get_key': {'text': "Artıq inventarınızda köhnə, paslı bir açar var. Bu, bəzi qapıları aça bilər. İndi nə edirsiniz?",'choices': [{'text': "🌳 Meşədəki qapını yoxla", 'goto': 'forest_path'}, {'text': "🧭 Məbədin girişinə qayıt", 'goto': 'start'}]}, 'open_door': {'text': "Açarı istifadə edirsiniz. Qədim mexanizm işə düşür və daş qapı yavaşca açılır. İçəridə parlayan bir qılıncın olduğu xəzinə otağı görünür! Qılıncı götürürsünüz.",'get_item': 'əfsanəvi qılınc','choices': [{'text': "⚔️ Qılıncı götür!", 'goto': 'treasure_found'}]}, 'treasure_found': {'text': "Əfsanəvi qılıncı əldə etdiniz! Macəranız uğurla başa çatdı. Qələbə! 🏆\n\nYeni macəra üçün məni bir qrupa əlavə edib /macera yazın.",'choices': []}, 'go_back': {'text': "Açarınız olmadığı üçün geri qayıtmaqdan başqa çarəniz yoxdur. Məbədin girişinə qayıtdınız.",'choices': [{'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}, {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_path'}]}}
+QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},{'question': 'Hansı planet "Qırmızı Planet" kimi tanınır?', 'options': ['Venera', 'Mars', 'Yupiter', 'Saturn'], 'correct': 'Mars'},{'question': 'Dünyanın ən hündür dağı hansıdır?', 'options': ['K2', 'Everest', 'Makalu', 'Lhotse'], 'correct': 'Everest'}]
+RIDDLES = [{'riddle': 'Ağzı var, dili yox, danışdıqca cana gəlir. Bu nədir?', 'answers': ['kitab']},{'riddle': 'Gecə yaranar, səhər itər. Bu nədir?', 'answers': ['yuxu', 'röya']}]
+NORMAL_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə idi?","Həyatında ən çox peşman olduğun şey?"]
+NORMAL_DARE_TASKS = ["Profil şəklini 1 saatlıq qrupdakı ən son göndərilən şəkil ilə dəyişdir.","Qrupdakı birinə səsli mesajla mahnı oxu."]
 
 # --- ƏSAS FUNKSİYALAR ---
 def get_rank_title(count: int) -> str:
@@ -74,7 +104,9 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.message.from_user
+    # Macəra oyunu üçün deep-link yoxlaması
     if context.args and len(context.args) > 0 and context.args[0] == 'macera':
+        context.user_data.clear()
         context.user_data['rpg_inventory'] = set()
         await update.message.reply_text("Sənin şəxsi macəran başlayır! ⚔️")
         await show_rpg_node(update, context, 'start'); return
@@ -196,7 +228,7 @@ async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
-
+    
     if data.startswith("start_info_"):
         command_name = data.split('_')[-1]
         if command_name == 'qaydalar':
