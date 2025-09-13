@@ -37,82 +37,33 @@ def init_db():
 STORY_DATA = {
     'start': {
         'text': "Siz qədim bir məbədin girişində dayanmısınız. Hava qaralır. İki yol var: soldakı mamırlı daşlarla örtülmüş cığır və sağdakı qaranlıq mağara girişi.",
-        'choices': [
-            {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_entrance'},
-            {'text': "🦇 Qaranlıq mağaraya daxil ol", 'goto': 'cave_entrance'},
-            {'text': "🕯️ Ətrafda məşəl axtar", 'goto': 'find_torch'}
-        ]
+        'choices': [{'text': "🌳 Sol cığırla get", 'goto': 'forest_path'}, {'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}]
     },
-    'forest_entrance': {
-        'text': "Meşənin dərinliklərinə doğru irəliləyirsiniz. Qarşınıza keçilməz, dərin bir yarğan çıxır. O biri tərəfə keçmək üçün bir yola ehtiyacınız var.",
-        'choices': [
-            {'text': "🌉 İpi istifadə et", 'goto': 'chasm_crossed', 'requires_item': 'ip'},
-            {'text': " geri dön", 'goto': 'start'}
-        ]
-    },
-    'chasm_crossed': {
-        'text': "İpi möhkəm bir ağaca bağlayıb yarğanın o biri tərəfinə keçirsiniz. Orada, köhnə bir postamentin üzərində parlayan bir medalyon tapırsınız. Medalyonun üzərində qəribə simvollar var. Onu götürürsünüz.",
-        'get_item': 'qədim medalyon',
-        'choices': [
-            {'text': "Geri qayıt", 'goto': 'start'}
-        ]
+    'forest_path': {
+        'text': "Cığırla irəliləyərək üzərində qədim işarələr olan böyük bir daş qapıya çatırsınız. Qapı bağlıdır və ortasında böyük bir açar yeri var.",
+        'choices': [{'text': "🔑 Qədim açarı istifadə et", 'goto': 'open_door', 'requires_item': 'qədim açar'}, {'text': " geri dön", 'goto': 'start'}]
     },
     'cave_entrance': {
-        'text': "Mağaranın girişi çox qaranlıqdır. İçəri görmək üçün bir işığa ehtiyacınız var.",
-        'choices': [
-            {'text': "🔥 Məşəli yandır", 'goto': 'cave_lit', 'requires_item': 'məşəl'},
-            {'text': "Koranə irəlilə", 'goto': 'cave_dark_fail'},
-            {'text': "Geri dön", 'goto': 'start'}
-        ]
+        'text': "Qaranlıq mağaraya daxil olursunuz. Divardan asılmış köhnə bir açar gözünüzə dəyir. Onu götürürsünüz.",
+        'get_item': 'qədim açar',
+        'choices': [{'text': "Açarla birlikdə geri dön", 'goto': 'get_key'}]
     },
-    'cave_dark_fail': {
-        'text': "Qaranlıqda irəliləməyə çalışırsınız, lakin ayağınız boşluğa düşür və dərin bir çuxura yıxılırsınız. Macəranız burada bitdi. 😔\n\nYeni macəra üçün /macera yazın.",
-        'choices': []
+    'get_key': {
+        'text': "Artıq inventarınızda köhnə, paslı bir açar var. Bu, bəzi qapıları aça bilər. İndi nə edirsiniz?",
+        'choices': [{'text': "🌳 Meşədəki qapını yoxla", 'goto': 'forest_path'}, {'text': "🧭 Məbədin girişinə qayıt", 'goto': 'start'}]
     },
-    'cave_lit': {
-        'text': "Məşəli yandırırsınız və mağaranın divarları işıqlanır. Qarşınızda iki yol görürsünüz: birbaşa irəli gedən dar bir tunel və sağda köhnə taxta bir qapı.",
-        'choices': [
-            {'text': "Tunnelə gir", 'goto': 'tunnel'},
-            {'text': "🚪 Taxta qapını aç", 'goto': 'storage_room'}
-        ]
-    },
-    'storage_room': {
-        'text': "Taxta qapını açırsınız. Bura köhnə bir anbardır. Küncdə bir sandığın içində möhkəm bir ip tapırsınız. Onu götürürsünüz.",
-        'get_item': 'ip',
-        'choices': [
-            {'text': "Geri qayıt", 'goto': 'cave_lit'}
-        ]
-    },
-    'tunnel': {
-        'text': "Dar tunellə irəliləyirsiniz. Tunelin sonunda divarda üç fərqli rəngdə daş görürsünüz: Qırmızı, Mavi, Yaşıl. Görünür, bu bir tapmacadır. Hansı daşa basırsınız?",
-        'choices': [
-            {'text': "🔴 Qırmızı daşa bas", 'goto': 'puzzle_fail'},
-            {'text': "🔵 Mavi daşa bas", 'goto': 'puzzle_fail'},
-            {'text': "🟢 Yaşıl daşa bas", 'goto': 'puzzle_success'}
-        ]
-    },
-    'puzzle_fail': {
-        'text': "Səhv daşa basdınız! Yerdən oxlar çıxır və tələyə düşürsünüz. Macəranız burada bitdi. 😔\n\nYeni macəra üçün /macera yazın.",
-        'choices': []
-    },
-    'puzzle_success': {
-        'text': "Yaşıl daşa basırsınız. Divarda gizli bir bölmə açılır. İçəridə qədim bir sandıq var. Sandığı açırsınız və içindən parlayan bir qılınc tapırsınız!",
+    'open_door': {
+        'text': "Açarı istifadə edirsiniz. Qədim mexanizm işə düşür və daş qapı yavaşca açılır. İçəridə parlayan bir qılıncın olduğu xəzinə otağı görünür! Qılıncı götürürsünüz.",
         'get_item': 'əfsanəvi qılınc',
-        'choices': [
-            {'text': "Qılıncla məbədi tərk et", 'goto': 'win_ending'}
-        ]
+        'choices': [{'text': "⚔️ Qılıncı götür!", 'goto': 'treasure_found'}]
     },
-    'win_ending': {
-        'text': "Əfsanəvi qılıncı əldə etdiniz! Məbədin sirlərini açdınız və böyük bir xəzinə ilə geri döndünüz. Qələbə! 🏆\n\nYeni macəra üçün /macera yazın.",
+    'treasure_found': {
+        'text': "Əfsanəvi qılıncı əldə etdiniz! Macəranız uğurla başa çatdı. Qələbə! 🏆\n\nYeni macəra üçün /macera yazın.\n\n---\n*Öz qrupunuz və ya layihəniz üçün fərdi bot sifariş etmək istəyirsiniz? Oyunlar, statistika və idarəetmə funksiyaları ilə. Ətraflı məlumat üçün əlaqə: @tairhv*",
         'choices': []
     },
-    'find_torch': {
-        'text': "Məbədin girişindəki daşların arasında yaxşı gizlədilmiş bir məşəl tapırsınız. İndi mağaraya girməyə hazırsınız.",
-        'get_item': 'məşəl',
-        'choices': [
-            {'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'},
-            {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_entrance'}
-        ]
+    'go_back': {
+        'text': "Açarınız olmadığı üçün geri qayıtmaqdan başqa çarəniz yoxdur. Məbədin girişinə qayıtdınız.",
+        'choices': [{'text': "🦇 Mağaraya daxil ol", 'goto': 'cave_entrance'}, {'text': "🌳 Meşə cığırı ilə get", 'goto': 'forest_path'}]
     }
 }
 QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},{'question': 'Hansı planet "Qırmızı Planet" kimi tanınır?', 'options': ['Venera', 'Mars', 'Yupiter', 'Saturn'], 'correct': 'Mars'},{'question': 'Dünyanın ən hündür dağı hansıdır?', 'options': ['K2', 'Everest', 'Makalu', 'Lhotse'], 'correct': 'Everest'},{'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'},{'question': 'Bir il ərzində neçə ayda 31 gün var?', 'options': ['6', '7', '8', '5'], 'correct': '7'},{'question': 'Leonardo da Vinçinin şah əsəri olan "Mona Liza" tablosu hazırda hansı muzeydə sərgilənir?', 'options': ['Britaniya Muzeyi', 'Vatikan Muzeyi', 'Ermitaj', 'Luvr Muzeyi'], 'correct': 'Luvr Muzeyi'}, {'question': 'İnsan bədənində ən böyük orqan hansıdır?', 'options': ['Qaraciyər', 'Dəri', 'Ağciyər', 'Beyin'], 'correct': 'Dəri'}, {'question': 'Dünyanın ən böyük okeanı hansıdır?', 'options': ['Atlantik okeanı', 'Hind okeanı', 'Sakit okean', 'Şimal Buzlu okeanı'], 'correct': 'Sakit okean'}, {'question': 'İkinci Dünya Müharibəsi hansı ildə başlayıb?', 'options': ['1941', '1945', '1939', '1914'], 'correct': '1939'}, {'question': 'Məşhur "Bohemian Rhapsody" mahnısı hansı rok qrupuna aiddir?', 'options': ['The Beatles', 'Led Zeppelin', 'Queen', 'Pink Floyd'], 'correct': 'Queen'}, {'question': 'Novruz bayramının əsas atributlarından olan səməni nəyin rəmzidir?', 'options': ['Odun', 'Suyun', 'Torpağın oyanışı', 'Küləyin'], 'correct': 'Torpağın oyanışı'}, {'question': 'Hansı kimyəvi element qızılın simvoludur?', 'options': ['Ag', 'Au', 'Fe', 'Cu'], 'correct': 'Au'}, {'question': 'İlk mobil telefon zəngi hansı ildə edilib?', 'options': ['1985', '1991', '1973', '1969'], 'correct': '1973'}]
@@ -151,7 +102,10 @@ async def ask_next_player(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(chat_id, text=f"Sıra sənə çatdı, [{first_name}](tg://user?id={user_id})! Seçimini et:", reply_markup=reply_markup, parse_mode='Markdown')
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await start_command_menu(update, context, is_edit=False)
+    keyboard = [[InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    start_text = "Salam! Mən Oyun Botuyam. 🤖\nBütün oyunların qaydalarına baxmaq üçün düyməyə bas və ya əmrləri birbaşa yaz!"
+    await update.message.reply_text(start_text, reply_markup=reply_markup)
 async def qaydalar_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(RULES_TEXT, parse_mode='Markdown')
 async def game_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -228,46 +182,42 @@ async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lives_text = "❤️❤️❤️"; message = await update.message.reply_text(f"Viktorina başladı! 🧠\n\n**Sual:** {question}\n\nQalan cəhdlər: {lives_text}", parse_mode='Markdown', reply_markup=reply_markup)
     context.chat_data['quiz_message_id'] = message.message_id
 async def macera_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if context.chat_data.get('rpg_active'):
-        await update.message.reply_text("Artıq qrupda aktiv bir macəra oyunu var. Lütfən onun bitməsini gözləyin."); return
+    if context.chat_data.get(f'rpg_active_{update.message.from_user.id}'):
+        await update.message.reply_text("Sənin artıq aktiv bir macəran var. Əvvəlcə onu bitir."); return
     user = update.message.from_user
-    context.chat_data['rpg_active'] = True
-    context.chat_data['rpg_owner_id'] = user.id
-    context.chat_data['rpg_inventory'] = set()
-    node = STORY_DATA['start']
+    context.user_data['rpg_inventory'] = set() # Fərdi inventar
+    await show_rpg_node(update, context, 'start')
+async def show_rpg_node(update: Update, context: ContextTypes.DEFAULT_TYPE, node_key: str):
+    message = update.message if update.message else update.callback_query.message
+    node = STORY_DATA.get(node_key)
+    if not node: return
+    inventory = context.user_data.get('rpg_inventory', set())
+    if node.get('get_item'):
+        inventory.add(node.get('get_item'))
+        context.user_data['rpg_inventory'] = inventory
     text, choices = node['text'], node['choices']
-    keyboard = [[InlineKeyboardButton(choice['text'], callback_data=f"rpg_{choice['goto']}")] for choice in choices]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(text, reply_markup=reply_markup)
+    keyboard_buttons = []
+    for choice in choices:
+        if 'requires_item' in choice:
+            if choice['requires_item'] in inventory:
+                keyboard_buttons.append([InlineKeyboardButton(choice['text'], callback_data=f"rpg_{choice['goto']}")])
+        else:
+            keyboard_buttons.append([InlineKeyboardButton(choice['text'], callback_data=f"rpg_{choice['goto']}")])
+    reply_markup = InlineKeyboardMarkup(keyboard_buttons) if keyboard_buttons else None
+    if update.callback_query:
+        await update.callback_query.edit_message_text(text=text, reply_markup=reply_markup)
+    else:
+        await message.reply_text(text, reply_markup=reply_markup)
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query, user, data = update.callback_query, update.callback_query.from_user, update.callback_query.data
     await query.answer()
     if data == "back_to_start_menu":
-        await start_command_menu(query, context, is_edit=True); return
+        await start_command_menu(update, context, is_edit=True); return
     if data.startswith("start_info_"):
         await start_command_menu_handler(query, context); return
     if data.startswith("rpg_"):
-        owner_id = context.chat_data.get('rpg_owner_id')
-        if owner_id and user.id != owner_id:
-            await query.answer("⛔ Bu macəranı yalnız oyunu başlayan şəxs idarə edə bilər!", show_alert=True); return
         node_key = data.split('_', 1)[1]
-        node = STORY_DATA.get(node_key)
-        if not node: await query.edit_message_text("Xəta baş verdi, hekayə tapılmadı."); return
-        inventory = context.chat_data.setdefault('rpg_inventory', set())
-        if node.get('get_item'): inventory.add(node.get('get_item'))
-        text, choices = node['text'], node['choices']
-        keyboard_buttons = []
-        for choice in choices:
-            if 'requires_item' in choice:
-                if choice['requires_item'] in inventory:
-                    keyboard_buttons.append([InlineKeyboardButton(choice['text'], callback_data=f"rpg_{choice['goto']}")])
-            else: keyboard_buttons.append([InlineKeyboardButton(choice['text'], callback_data=f"rpg_{choice['goto']}")])
-        reply_markup = InlineKeyboardMarkup(keyboard_buttons) if keyboard_buttons else None
-        if not choices:
-            await query.edit_message_text(text=text, reply_markup=None)
-            context.chat_data.pop('rpg_active', None); context.chat_data.pop('rpg_owner_id', None); context.chat_data.pop('rpg_inventory', None)
-        else: await query.edit_message_text(text=text, reply_markup=reply_markup)
-        return
+        await show_rpg_node(update, context, node_key); return
     if data.startswith("quiz_"):
         if not context.chat_data.get('quiz_active'):
             await query.answer("Bu viktorina artıq bitib.", show_alert=True); return
@@ -365,13 +315,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     (chat_id, user.id, user.first_name, datetime.datetime.now(datetime.timezone.utc)))
         conn.commit(); cur.close(); conn.close()
     except Exception as e: logger.error(f"Mesajı bazaya yazarkən xəta: {e}")
-async def start_command_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, is_edit: bool = False):
+async def start_command_menu(update, context, is_edit=False):
     keyboard = [[InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     start_text = "Salam! Mən Oyun Botuyam. 🤖\nBütün oyunların qaydalarına baxmaq üçün düyməyə bas və ya əmrləri birbaşa yaz!"
-    
-    if is_edit: await query.edit_message_text(text=start_text, reply_markup=reply_markup)
-    else: await update.message.reply_text(text=start_text, reply_markup=reply_markup)
+    message_to_send = update.callback_query.message if is_edit else update.message
+    if is_edit:
+        await message_to_send.edit_text(text=start_text, reply_markup=reply_markup)
+    else:
+        await message_to_send.reply_text(text=start_text, reply_markup=reply_markup)
 async def start_command_menu_handler(query, context):
     command_name = query.data.split('_')[-1]
     if command_name == 'qaydalar':
