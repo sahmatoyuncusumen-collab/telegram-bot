@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 # --- BAZA VƏ ƏSAS DƏYİŞƏNLƏR ---
 DATABASE_URL = os.environ.get("DATABASE_URL")
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
-BOT_OWNER_ID = 123456789  # <--- BURAYA ÖZ TELEGRAM ID-NİZİ YAZIN!
+BOT_OWNER_ID = 6751376199  # <--- BURAYA ÖZ TELEGRAM ID-NİZİ YAZIN!
 
 # --- TƏHLÜKƏSİZLİK YOXLAMASI ---
 def run_pre_flight_checks():
@@ -313,4 +313,5 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
 
