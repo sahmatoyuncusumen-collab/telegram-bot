@@ -5,7 +5,7 @@ import psycopg2
 import datetime
 import sys
 import asyncio
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, BotCommand
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 from telegram.constants import ChatType
 from collections import deque
@@ -43,6 +43,7 @@ def init_db():
         logger.error(f"Baza yaradılarkən xəta: {e}")
 
 def is_user_premium(user_id: int) -> bool:
+    conn, cur = None, None
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
@@ -54,6 +55,7 @@ def is_user_premium(user_id: int) -> bool:
         if conn: conn.close()
 
 def add_premium_user(user_id: int) -> bool:
+    conn, cur = None, None
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
@@ -72,21 +74,66 @@ def add_premium_user(user_id: int) -> bool:
 ABOUT_TEXT = "🤖 **Bot Haqqında**\n\nMən qruplar üçün nəzərdə tutulmuş əyləncə və statistika botuyam. Mənimlə viktorina, tapmaca və digər oyunları oynaya, həmçinin qrupdakı aktivliyinizə görə rütbə qazana bilərsiniz."
 RULES_TEXT = "📜 **Qrup Qaydaları**\n\n1. Reklam etmək qəti qadağandır.\n2. Təhqir, söyüş və aqressiv davranışlara icazə verilmir.\n3. Dini və siyasi mövzuları müzakirə etmək olmaz.\n4. Qaydalara riayət etməyən istifadəçilər xəbərdarlıqsız uzaqlaşdırılacaq."
 
-# --- VIKTORINA SUALLARI ---
+# --- VIKTORINA SUALLARI (YENİLƏNMİŞ BAŞLANĞIC PAKETİ) ---
 SADE_QUIZ_QUESTIONS = [
-    {'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},
-    {'question': 'Dünyanın ən hündür dağı hansıdır?', 'options': ['K2', 'Everest', 'Elbrus', 'Monblan'], 'correct': 'Everest'},
-    {'question': 'Hansı planet "Qırmızı Planet" kimi tanınır?', 'options': ['Venera', 'Mars', 'Yupiter', 'Saturn'], 'correct': 'Mars'},
-    {'question': 'Suyun kimyəvi formulu nədir?', 'options': ['CO2', 'O2', 'H2O', 'NaCl'], 'correct': 'H2O'},
-    {'question': '"Apple" şirkətinin qurucusu kimdir?', 'options': ['Bill Gates', 'Mark Zuckerberg', 'Steve Jobs', 'Jeff Bezos'], 'correct': 'Steve Jobs'},
+    # Tarix
+    {'question': 'İkinci Dünya Müharibəsi hansı ildə başlamışdır?', 'options': ['1935', '1939', '1941', '1945'], 'correct': '1939'},
+    {'question': 'Qədim Misirdə hökmdarlar necə adlanırdı?', 'options': ['İmperator', 'Sultan', 'Firon', 'Kral'], 'correct': 'Firon'},
+    {'question': 'Amerikanı kim kəşf etmişdir?', 'options': ['Vasco da Gama', 'Ferdinand Magellan', 'Xristofor Kolumb', 'James Cook'], 'correct': 'Xristofor Kolumb'},
+    {'question': 'Roma İmperiyasının ilk imperatoru kim olmuşdur?', 'options': ['Yuli Sezar', 'Oktavian Avqust', 'Neron', 'Mark Antoni'], 'correct': 'Oktavian Avqust'},
+    {'question': 'Azərbaycan Xalq Cümhuriyyəti neçənci ildə qurulmuşdur?', 'options': ['1920', '1918', '1991', '1905'], 'correct': '1918'},
+
+    # Elm
+    {'question': 'Aşağıdakılardan hansı məməli heyvan deyil?', 'options': ['Balina', 'Yarasa', 'Pinqvin', 'Delfin'], 'correct': 'Pinqvin'},
+    {'question': 'İnsanın bədənində neçə sümük var?', 'options': ['186', '206', '226', '256'], 'correct': '206'},
+    {'question': 'Günəş sistemində Günəşə ən yaxın planet hansıdır?', 'options': ['Venera', 'Mars', 'Merkuri', 'Yer'], 'correct': 'Merkuri'},
+    {'question': 'Kimyəvi elementlərin dövri sistem cədvəlini kim yaratmışdır?', 'options': ['İsaak Nyuton', 'Albert Eynşteyn', 'Dmitri Mendeleyev', 'Mariya Küri'], 'correct': 'Dmitri Mendeleyev'},
+    {'question': 'Qravitasiya (cazibə qüvvəsi) qanununu kim kəşf etmişdir?', 'options': ['Qalileo Qaliley', 'İsaak Nyuton', 'Nikola Tesla', 'Arximed'], 'correct': 'İsaak Nyuton'},
+
+    # Texnologiya
+    {'question': 'İlk uğurlu təyyarəni kimlər icad etmişdir?', 'options': ['Lumiere qardaşları', 'Wright qardaşları', 'Montgolfier qardaşları', 'Grimm qardaşları'], 'correct': 'Wright qardaşları'},
+    {'question': '"Facebook" sosial şəbəkəsinin qurucusu kimdir?', 'options': ['Bill Gates', 'Steve Jobs', 'Larry Page', 'Mark Zuckerberg'], 'correct': 'Mark Zuckerberg'},
+    {'question': 'Hansı şirkət "Windows" əməliyyat sistemini hazırlayır?', 'options': ['Apple', 'Google', 'Microsoft', 'IBM'], 'correct': 'Microsoft'},
+    {'question': 'Telefonu kim icad etmişdir?', 'options': ['Tomas Edison', 'Nikola Tesla', 'Aleksandr Bell', 'Samuel Morze'], 'correct': 'Aleksandr Bell'},
+    {'question': 'Kompüterdə məlumatın ən kiçik ölçü vahidi nədir?', 'options': ['Bayt', 'Bit', 'Meqabayt', 'Geqabayt'], 'correct': 'Bit'},
+
+    # İdman
+    {'question': 'Futbol üzrə Dünya Çempionatı neçə ildən bir keçirilir?', 'options': ['2', '3', '4', '5'], 'correct': '4'},
+    {'question': 'Olimpiya oyunlarının simvolu olan halqaların sayı neçədir?', 'options': ['4', '5', '6', '7'], 'correct': '5'},
+    {'question': '"Dəmir Mayk" ləqəbli məşhur boksçu kimdir?', 'options': ['Məhəmməd Əli', 'Mayk Tayson', 'Floyd Mayweather', 'Rokki Marçiano'], 'correct': 'Mayk Tayson'},
+    {'question': 'Basketbolda bir komanda meydanda neçə oyunçu ilə təmsil olunur?', 'options': ['5', '6', '7', '11'], 'correct': '5'},
+    {'question': 'Ən çox "Qızıl Top" (Ballon d\'Or) mükafatını kim qazanıb?', 'options': ['Kriştiano Ronaldo', 'Lionel Messi', 'Mişel Platini', 'Yohan Kroyf'], 'correct': 'Lionel Messi'},
 ]
 
+
 PREMIUM_QUIZ_QUESTIONS = [
-    {'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'},
-    {'question': 'Azərbaycan Xalq Cümhuriyyətinin ilk baş naziri kim olmuşdur?', 'options': ['Məmməd Əmin Rəsulzadə', 'Nəsib bəy Yusifbəyli', 'Fətəli Xan Xoyski', 'Əlimərdan bəy Topçubaşov'], 'correct': 'Fətəli Xan Xoyski'},
-    {'question': 'Leonardo da Vinçinin şah əsəri olan "Mona Liza" tablosu hazırda hansı muzeydə sərgilənir?', 'options': ['Britaniya Muzeyi', 'Vatikan Muzeyi', 'Ermitaj', 'Luvr Muzeyi'], 'correct': 'Luvr Muzeyi'},
-    {'question': '"Formula 1" yarışlarının ən çox dünya çempionu olmuş pilotu kimdir?', 'options': ['Ayrton Senna', 'Michael Schumacher', 'Lewis Hamilton', 'Hər ikisi (Schumacher və Hamilton)'], 'correct': 'Hər ikisi (Schumacher və Hamilton)'},
-    {'question': 'İşıq sürəti saniyədə təxminən nə qədərdir?', 'options': ['150,000 km', '300,000 km', '500,000 km', '1,000,000 km'], 'correct': '300,000 km'},
+    # Tarix
+    {'question': 'Tarixdə "Atilla" adı ilə tanınan hökmdar hansı imperiyanı idarə edirdi?', 'options': ['Roma İmperiyası', 'Hun İmperiyası', 'Monqol İmperiyası', 'Osmanlı İmperiyası'], 'correct': 'Hun İmperiyası'},
+    {'question': '100 illik müharibə hansı iki dövlət arasında olmuşdur?', 'options': ['İngiltərə və Fransa', 'İspaniya və Portuqaliya', 'Roma və Karfagen', 'Prussiya və Avstriya'], 'correct': 'İngiltərə və Fransa'},
+    {'question': 'Troya müharibəsi haqqında məlumat verən Homerin məşhur əsəri hansıdır?', 'options': ['Odisseya', 'Teoqoniya', 'İliada', 'Eneida'], 'correct': 'İliada'},
+    {'question': 'Berlin divarı neçənci ildə yıxılmışdır?', 'options': ['1985', '1989', '1991', '1993'], 'correct': '1989'},
+    {'question': 'Səfəvi dövlətinin banisi kimdir?', 'options': ['Şah Abbas', 'Sultan Hüseyn', 'Şah İsmayıl Xətai', 'Nadir Şah'], 'correct': 'Şah İsmayıl Xətai'},
+
+    # Elm
+    {'question': 'Eynşteynin məşhur Nisbilik Nəzəriyyəsinin düsturu hansıdır?', 'options': ['F=ma', 'E=mc²', 'a²+b²=c²', 'V=IR'], 'correct': 'E=mc²'},
+    {'question': 'İnsan DNT-si neçə xromosomdan ibarətdir?', 'options': ['23 cüt (46)', '21 cüt (42)', '25 cüt (50)', '32 cüt (64)'], 'correct': '23 cüt (46)'},
+    {'question': 'İlk dəfə Aya ayaq basan insan kimdir?', 'options': ['Yuri Qaqarin', 'Con Glenn', 'Maykl Kollins', 'Nil Armstronq'], 'correct': 'Nil Armstronq'},
+    {'question': 'Hansı kimyəvi elementin simvolu "Au"-dur?', 'options': ['Gümüş', 'Mis', 'Qızıl', 'Dəmir'], 'correct': 'Qızıl'},
+    {'question': 'Çernobıl AES-də qəza neçənci ildə baş vermişdir?', 'options': ['1982', '1986', '1988', '1991'], 'correct': '1986'},
+    
+    # Texnologiya
+    {'question': '"World Wide Web" (WWW) konsepsiyasını kim yaratmışdır?', 'options': ['Steve Jobs', 'Linus Torvalds', 'Tim Berners-Lee', 'Vint Cerf'], 'correct': 'Tim Berners-Lee'},
+    {'question': 'İlk kosmik peyk olan "Sputnik 1" hansı ölkə tərəfindən orbitə buraxılmışdır?', 'options': ['ABŞ', 'Çin', 'SSRİ', 'Böyük Britaniya'], 'correct': 'SSRİ'},
+    {'question': 'Kriptovalyuta olan Bitcoin-in yaradıcısının ləqəbi nədir?', 'options': ['Vitalik Buterin', 'Satoshi Nakamoto', 'Elon Musk', 'Charlie Lee'], 'correct': 'Satoshi Nakamoto'},
+    {'question': 'Hansı proqramlaşdırma dili Google tərəfindən yaradılmışdır?', 'options': ['Swift', 'Kotlin', 'Go', 'Rust'], 'correct': 'Go'},
+    {'question': 'Kompüter elmlərində "Turing maşını" nəzəriyyəsini kim irəli sürmüşdür?', 'options': ['Con fon Neyman', 'Alan Turinq', 'Ada Lavleys', 'Çarlz Bebbic'], 'correct': 'Alan Turinq'},
+
+    # İdman
+    {'question': 'Ağır atletika üzrə 3 qat Olimpiya, 5 qat Dünya və 10 qat Avropa çempionu olmuş "Cib Heraklisi" ləqəbli türk idmançı kimdir?', 'options': ['Halil Mutlu', 'Naim Süleymanoğlu', 'Taner Sağır', 'Hafiz Süleymanoğlu'], 'correct': 'Naim Süleymanoğlu'},
+    {'question': '"Formula 1" tarixində ən çox yarış qazanan pilot kimdir?', 'options': ['Mixael Şumaxer', 'Sebastian Vettel', 'Ayrton Senna', 'Lüis Hemilton'], 'correct': 'Lüis Hemilton'},
+    {'question': 'Şahmatda "Sitsiliya müdafiəsi" hansı gedişlə başlayır?', 'options': ['1. e4 c5', '1. d4 Nf6', '1. e4 e5', '1. c4 e5'], 'correct': '1. e4 c5'},
+    {'question': 'Bir marafon yarışının rəsmi məsafəsi nə qədərdir?', 'options': ['26.2 km', '42.195 km', '50 km', '35.5 km'], 'correct': '42.195 km'},
+    {'question': 'Tennisdə "Böyük Dəbilqə" (Grand Slam) turnirlərinə hansı daxil deyil?', 'options': ['Uimbldon', 'ABŞ Açıq', 'Fransa Açıq (Roland Garros)', 'Indian Wells Masters'], 'correct': 'Indian Wells Masters'},
 ]
 
 # --- KÖMƏKÇİ FUNKSİYALAR ---
@@ -126,10 +173,7 @@ async def my_rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
         await update.message.reply_text("Bu əmr yalnız qruplarda işləyir.")
         return
-
-    user = update.message.from_user
-    chat_id = update.message.chat_id
-    message_count = 0
+    user = update.message.from_user; chat_id = update.message.chat_id; message_count = 0
     conn, cur = None, None
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -144,7 +188,6 @@ async def my_rank_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     finally:
         if cur: cur.close()
         if conn: conn.close()
-
     rank_title = get_rank_title(message_count)
     reply_text = (f"📊 **Sənin Statistikaların, {user.first_name}!**\n\n"
                   f"💬 Bu qrupdakı ümumi mesaj sayın: **{message_count}**\n"
@@ -261,10 +304,22 @@ async def handle_all_messages(update: Update, context: ContextTypes.DEFAULT_TYPE
         if conn: conn.close()
 
 # --- ƏSAS MAIN FUNKSİYASI ---
-def main() -> None:
+async def main() -> None:
     run_pre_flight_checks()
     init_db()
+    
     application = Application.builder().token(TOKEN).build()
+    
+    # Botun menyusuna əmrlərin əlavə edilməsi
+    commands = [
+        BotCommand("start", "Əsas menyunu açmaq"),
+        BotCommand("qaydalar", "Qrup qaydalarını göstərmək"),
+        BotCommand("haqqinda", "Bot haqqında məlumat"),
+        BotCommand("menim_rutbem", "Şəxsi rütbəni yoxlamaq"),
+        BotCommand("viktorina", "Viktorina oyununu başlatmaq"),
+        BotCommand("zer", "1-6 arası zər atmaq")
+    ]
+    await application.bot.set_my_commands(commands)
     
     # Handler-lərin əlavə edilməsi
     application.add_handler(CommandHandler("start", start_command))
@@ -273,7 +328,7 @@ def main() -> None:
     application.add_handler(CommandHandler("menim_rutbem", my_rank_command))
     application.add_handler(CommandHandler("addpremium", add_premium_command))
     application.add_handler(CommandHandler("viktorina", viktorina_command, filters=~filters.ChatType.PRIVATE))
-    application.add_handler(CommandHandler("zer", zer_command)) # Yeni əmr
+    application.add_handler(CommandHandler("zer", zer_command))
     
     application.add_handler(CallbackQueryHandler(button_handler))
     application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome_new_members))
@@ -281,8 +336,7 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_all_messages))
     
     logger.info("Bot işə düşdü...")
-    application.run_polling()
+    await application.run_polling()
 
 if __name__ == '__main__':
-    main()
-
+    asyncio.run(main())
