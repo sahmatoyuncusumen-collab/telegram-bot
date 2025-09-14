@@ -40,6 +40,8 @@ def init_db():
         logger.info("Verilənlər bazası cədvəlləri hazırdır.")
     except Exception as e:
         logger.error(f"Baza yaradılarkən xəta: {e}")
+        # YENİLİK: Baza xətası olarsa proqramı dayandır
+        sys.exit(1)
     finally:
         if cur: cur.close()
         if conn: conn.close()
@@ -78,58 +80,15 @@ RULES_TEXT = "📜 **Qrup Qaydaları**\n\n1. Reklam etmək qəti qadağandır.\n
 
 # --- VIKTORINA SUALLARI (Başlanğıc Paketi) ---
 SADE_QUIZ_QUESTIONS = [
-    # Tarix
     {'question': 'İkinci Dünya Müharibəsi hansı ildə başlamışdır?', 'options': ['1935', '1939', '1941', '1945'], 'correct': '1939'},
     {'question': 'Qədim Misirdə hökmdarlar necə adlanırdı?', 'options': ['İmperator', 'Sultan', 'Firon', 'Kral'], 'correct': 'Firon'},
-    {'question': 'Amerikanı kim kəşf etmişdir?', 'options': ['Vasco da Gama', 'Ferdinand Magellan', 'Xristofor Kolumb', 'James Cook'], 'correct': 'Xristofor Kolumb'},
-    {'question': 'Roma İmperiyasının ilk imperatoru kim olmuşdur?', 'options': ['Yuli Sezar', 'Oktavian Avqust', 'Neron', 'Mark Antoni'], 'correct': 'Oktavian Avqust'},
-    {'question': 'Azərbaycan Xalq Cümhuriyyəti neçənci ildə qurulmuşdur?', 'options': ['1920', '1918', '1991', '1905'], 'correct': '1918'},
-    # Elm
-    {'question': 'Aşağıdakılardan hansı məməli heyvan deyil?', 'options': ['Balina', 'Yarasa', 'Pinqvin', 'Delfin'], 'correct': 'Pinqvin'},
-    {'question': 'İnsanın bədənində neçə sümük var?', 'options': ['186', '206', '226', '256'], 'correct': '206'},
-    {'question': 'Günəş sistemində Günəşə ən yaxın planet hansıdır?', 'options': ['Venera', 'Mars', 'Merkuri', 'Yer'], 'correct': 'Merkuri'},
-    {'question': 'Kimyəvi elementlərin dövri sistem cədvəlini kim yaratmışdır?', 'options': ['İsaak Nyuton', 'Albert Eynşteyn', 'Dmitri Mendeleyev', 'Mariya Küri'], 'correct': 'Dmitri Mendeleyev'},
-    {'question': 'Qravitasiya (cazibə qüvvəsi) qanununu kim kəşf etmişdir?', 'options': ['Qalileo Qaliley', 'İsaak Nyuton', 'Nikola Tesla', 'Arximed'], 'correct': 'İsaak Nyuton'},
-    # Texnologiya
-    {'question': 'İlk uğurlu təyyarəni kimlər icad etmişdir?', 'options': ['Lumiere qardaşları', 'Wright qardaşları', 'Montgolfier qardaşları', 'Grimm qardaşları'], 'correct': 'Wright qardaşları'},
-    {'question': '"Facebook" sosial şəbəkəsinin qurucusu kimdir?', 'options': ['Bill Gates', 'Steve Jobs', 'Larry Page', 'Mark Zuckerberg'], 'correct': 'Mark Zuckerberg'},
-    {'question': 'Hansı şirkət "Windows" əməliyyat sistemini hazırlayır?', 'options': ['Apple', 'Google', 'Microsoft', 'IBM'], 'correct': 'Microsoft'},
-    {'question': 'Telefonu kim icad etmişdir?', 'options': ['Tomas Edison', 'Nikola Tesla', 'Aleksandr Bell', 'Samuel Morze'], 'correct': 'Aleksandr Bell'},
-    {'question': 'Kompüterdə məlumatın ən kiçik ölçü vahidi nədir?', 'options': ['Bayt', 'Bit', 'Meqabayt', 'Geqabayt'], 'correct': 'Bit'},
-    # İdman
-    {'question': 'Futbol üzrə Dünya Çempionatı neçə ildən bir keçirilir?', 'options': ['2', '3', '4', '5'], 'correct': '4'},
-    {'question': 'Olimpiya oyunlarının simvolu olan halqaların sayı neçədir?', 'options': ['4', '5', '6', '7'], 'correct': '5'},
-    {'question': '"Dəmir Mayk" ləqəbli məşhur boksçu kimdir?', 'options': ['Məhəmməd Əli', 'Mayk Tayson', 'Floyd Mayweather', 'Rokki Marçiano'], 'correct': 'Mayk Tayson'},
-    {'question': 'Basketbolda bir komanda meydanda neçə oyunçu ilə təmsil olunur?', 'options': ['5', '6', '7', '11'], 'correct': '5'},
-    {'question': 'Ən çox "Qızıl Top" (Ballon d\'Or) mükafatını kim qazanıb?', 'options': ['Kriştiano Ronaldo', 'Lionel Messi', 'Mişel Platini', 'Yohan Kroyf'], 'correct': 'Lionel Messi'},
 ]
 
 PREMIUM_QUIZ_QUESTIONS = [
-    # Tarix
-    {'question': 'Tarixdə "Atilla" adı ilə tanınan hökmdar hansı imperiyanı idə edirdi?', 'options': ['Roma İmperiyası', 'Hun İmperiyası', 'Monqol İmperiyası', 'Osmanlı İmperiyası'], 'correct': 'Hun İmperiyası'},
+    {'question': 'Tarixdə "Atilla" adı ilə tanınan hökmdar hansı imperiyanı idarə edirdi?', 'options': ['Roma İmperiyası', 'Hun İmperiyası', 'Monqol İmperiyası', 'Osmanlı İmperiyası'], 'correct': 'Hun İmperiyası'},
     {'question': '100 illik müharibə hansı iki dövlət arasında olmuşdur?', 'options': ['İngiltərə və Fransa', 'İspaniya və Portuqaliya', 'Roma və Karfagen', 'Prussiya və Avstriya'], 'correct': 'İngiltərə və Fransa'},
-    {'question': 'Troya müharibəsi haqqında məlumat verən Homerin məşhur əsəri hansıdır?', 'options': ['Odisseya', 'Teoqoniya', 'İliada', 'Eneida'], 'correct': 'İliada'},
-    {'question': 'Berlin divarı neçənci ildə yıxılmışdır?', 'options': ['1985', '1989', '1991', '1993'], 'correct': '1989'},
-    {'question': 'Səfəvi dövlətinin banisi kimdir?', 'options': ['Şah Abbas', 'Sultan Hüseyn', 'Şah İsmayıl Xətai', 'Nadir Şah'], 'correct': 'Şah İsmayıl Xətai'},
-    # Elm
-    {'question': 'Eynşteynin məşhur Nisbilik Nəzəriyyəsinin düsturu hansıdır?', 'options': ['F=ma', 'E=mc²', 'a²+b²=c²', 'V=IR'], 'correct': 'E=mc²'},
-    {'question': 'İnsan DNT-si neçə xromosomdan ibarətdir?', 'options': ['23 cüt (46)', '21 cüt (42)', '25 cüt (50)', '32 cüt (64)'], 'correct': '23 cüt (46)'},
-    {'question': 'İlk dəfə Aya ayaq basan insan kimdir?', 'options': ['Yuri Qaqarin', 'Con Glenn', 'Maykl Kollins', 'Nil Armstronq'], 'correct': 'Nil Armstronq'},
-    {'question': 'Hansı kimyəvi elementin simvolu "Au"-dur?', 'options': ['Gümüş', 'Mis', 'Qızıl', 'Dəmir'], 'correct': 'Qızıl'},
-    {'question': 'Çernobıl AES-də qəza neçənci ildə baş vermişdir?', 'options': ['1982', '1986', '1988', '1991'], 'correct': '1986'},
-    # Texnologiya
-    {'question': '"World Wide Web" (WWW) konsepsiyasını kim yaratmışdır?', 'options': ['Steve Jobs', 'Linus Torvalds', 'Tim Berners-Lee', 'Vint Cerf'], 'correct': 'Tim Berners-Lee'},
-    {'question': 'İlk kosmik peyk olan "Sputnik 1" hansı ölkə tərəfindən orbitə buraxılmışdır?', 'options': ['ABŞ', 'Çin', 'SSRİ', 'Böyük Britaniya'], 'correct': 'SSRİ'},
-    {'question': 'Kriptovalyuta olan Bitcoin-in yaradıcısının ləqəbi nədir?', 'options': ['Vitalik Buterin', 'Satoshi Nakamoto', 'Elon Musk', 'Charlie Lee'], 'correct': 'Satoshi Nakamoto'},
-    {'question': 'Hansı proqramlaşdırma dili Google tərəfindən yaradılmışdır?', 'options': ['Swift', 'Kotlin', 'Go', 'Rust'], 'correct': 'Go'},
-    {'question': 'Kompüter elmlərində "Turing maşını" nəzəriyyəsini kim irəli sürmüşdür?', 'options': ['Con fon Neyman', 'Alan Turinq', 'Ada Lavleys', 'Çarlz Bebbic'], 'correct': 'Alan Turinq'},
-    # İdman
-    {'question': 'Ağır atletika üzrə 3 qat Olimpiya, 5 qat Dünya və 10 qat Avropa çempionu olmuş "Cib Heraklisi" ləqəbli türk idmançı kimdir?', 'options': ['Halil Mutlu', 'Naim Süleymanoğlu', 'Taner Sağır', 'Hafiz Süleymanoğlu'], 'correct': 'Naim Süleymanoğlu'},
-    {'question': '"Formula 1" tarixində ən çox yarış qazanan pilot kimdir?', 'options': ['Mixael Şumaxer', 'Sebastian Vettel', 'Ayrton Senna', 'Lüis Hemilton'], 'correct': 'Lüis Hemilton'},
-    {'question': 'Şahmatda "Sitsiliya müdafiəsi" hansı gedişlə başlayır?', 'options': ['1. e4 c5', '1. d4 Nf6', '1. e4 e5', '1. c4 e5'], 'correct': '1. e4 c5'},
-    {'question': 'Bir marafon yarışının rəsmi məsafəsi nə qədərdir?', 'options': ['26.2 km', '42.195 km', '50 km', '35.5 km'], 'correct': '42.195 km'},
-    {'question': 'Tennisdə "Böyük Dəbilqə" (Grand Slam) turnirlərinə hansı daxil deyil?', 'options': ['Uimbldon', 'ABŞ Açıq', 'Fransa Açıq (Roland Garros)', 'Indian Wells Masters'], 'correct': 'Indian Wells Masters'},
 ]
+
 
 # --- KÖMƏKÇİ FUNKSİYALAR ---
 def get_rank_title(count: int) -> str:
@@ -217,43 +176,27 @@ async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Zəhmət olmasa, viktorina növünü seçin:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def ask_next_quiz_question(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Bu funksiya callback_query-dən gələn update obyektini gözləyir
-    if hasattr(update, 'callback_query') and update.callback_query:
-        message = update.callback_query.message
-    else: # Əgər birbaşa çağırılırsa (nadir hal)
-        message = update.message
-        
+    if hasattr(update, 'callback_query') and update.callback_query: message = update.callback_query.message
+    else: message = update.message
     is_premium = context.chat_data.get('quiz_is_premium', False)
-    
     question_pool = PREMIUM_QUIZ_QUESTIONS if is_premium else SADE_QUIZ_QUESTIONS
-    if not question_pool:
-        await message.edit_text("Bu kateqoriya üçün heç bir sual tapılmadı."); return
-
+    if not question_pool: await message.edit_text("Bu kateqoriya üçün heç bir sual tapılmadı."); return
     recently_asked = context.chat_data.get('recently_asked_quiz', deque(maxlen=20))
     possible_questions = [q for q in question_pool if q['question'] not in recently_asked]
-    if not possible_questions:
-        possible_questions = question_pool; recently_asked.clear()
-
+    if not possible_questions: possible_questions = question_pool; recently_asked.clear()
     question_data = random.choice(possible_questions)
     recently_asked.append(question_data['question'])
     context.chat_data['recently_asked_quiz'] = recently_asked
-    
     question, correct_answer, options = question_data['question'], question_data['correct'], list(question_data['options'])
     random.shuffle(options)
     context.chat_data['correct_quiz_answer'] = correct_answer
-    
     keyboard = [[InlineKeyboardButton(option, callback_data=f"quiz_{option}")] for option in options]
     keyboard.append([InlineKeyboardButton("Oyunu Bitir ⏹️", callback_data="quiz_stop")])
-    
     quiz_title = "Premium Viktorina 👑" if is_premium else "Sadə Viktorina 🌱"
     lives_text = "❤️" * context.chat_data.get('quiz_lives', 3)
     score = context.chat_data.get('quiz_score', 0)
-    
     await message.edit_text(
-        f"{quiz_title}\n\n"
-        f"**Xalınız:** {score} ⭐\n"
-        f"**Qalan can:** {lives_text}\n\n"
-        f"**Sual:** {question}",
+        f"{quiz_title}\n\n" f"**Xalınız:** {score} ⭐\n" f"**Qalan can:** {lives_text}\n\n" f"**Sual:** {question}",
         parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard)
     )
     
@@ -261,7 +204,6 @@ async def ask_next_quiz_question(update: Update, context: ContextTypes.DEFAULT_T
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query; user = query.from_user; data = query.data
     await query.answer()
-
     if data == "start_info_about":
         await query.message.edit_text(text=ABOUT_TEXT, parse_mode='Markdown', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(" geri", callback_data="back_to_start")]]))
         return
@@ -272,7 +214,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = [ [InlineKeyboardButton("ℹ️ Bot Haqqında Məlumat", callback_data="start_info_about")], [InlineKeyboardButton("📜 Bütün Qaydalar", callback_data="start_info_qaydalar")], [InlineKeyboardButton("👥 Oyun Qrupumuz", url="https://t.me/+0z5V-OvEMmgzZTFi")], [InlineKeyboardButton(f"👨‍💻 Admin ilə Əlaqə", url=f"https://t.me/{ADMIN_USERNAME}")] ]
         await query.message.edit_text("Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin bölməni seç:", reply_markup=InlineKeyboardMarkup(keyboard))
         return
-
     if data == 'viktorina_sade' or data == 'viktorina_premium':
         is_premium_choice = (data == 'viktorina_premium')
         if is_premium_choice and not is_user_premium(user.id):
@@ -282,16 +223,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.chat_data.update({ 'quiz_active': True, 'quiz_is_premium': is_premium_choice, 'quiz_lives': 3, 'quiz_score': 0, 'quiz_message_id': query.message.message_id })
         await ask_next_quiz_question(update, context)
         return
-
     if not context.chat_data.get('quiz_active'):
         await query.answer("Bu oyun artıq bitib.", show_alert=True); return
-
     if data == 'quiz_stop':
         score = context.chat_data.get('quiz_score', 0)
         await query.message.edit_text(f"Oyun dayandırıldı! ✅\n\nSizin yekun xalınız: **{score}** ⭐\n\nYeni oyun üçün /viktorina yazın.", parse_mode='Markdown')
         context.chat_data.clear()
         return
-
     if data.startswith("quiz_"):
         chosen_answer = data.split('_', 1)[1]; correct_answer = context.chat_data['correct_quiz_answer']
         if chosen_answer == correct_answer:
@@ -325,12 +263,14 @@ async def handle_all_messages(update: Update, context: ContextTypes.DEFAULT_TYPE
         if cur: cur.close()
         if conn: conn.close()
 
-# --- ƏSAS MAIN FUNKSİYASI ---
+# --- ƏSAS MAIN FUNKSİYASI (Gücləndirilmiş Versiya) ---
 async def main() -> None:
     run_pre_flight_checks()
     init_db()
+    
     application = Application.builder().token(TOKEN).build()
     
+    # Botun menyusuna əmrlərin əlavə edilməsi
     commands = [
         BotCommand("start", "Əsas menyunu açmaq"),
         BotCommand("qaydalar", "Qrup qaydalarını göstərmək"),
@@ -339,8 +279,8 @@ async def main() -> None:
         BotCommand("viktorina", "Viktorina oyununu başlatmaq"),
         BotCommand("zer", "1-6 arası zər atmaq")
     ]
-    await application.bot.set_my_commands(commands)
     
+    # Handler-lərin əlavə edilməsi
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("qaydalar", qaydalar_command))
     application.add_handler(CommandHandler("haqqinda", haqqinda_command))
@@ -353,8 +293,28 @@ async def main() -> None:
     application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome_new_members))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_all_messages))
     
-    logger.info("Bot işə düşdü...")
-    await application.run_polling()
+    # YENİ VƏ GÜCLƏNDİRİLMİŞ İŞƏ SALMA MƏNTİQİ
+    try:
+        logger.info("Bot işə düşür...")
+        await application.initialize()
+        await application.bot.set_my_commands(commands) # Əmrləri initialize-dan sonra təyin etmək daha yaxşıdır
+        await application.updater.start_polling()
+        await application.start()
+        
+        # Botun dayanmaması üçün sonsuz dövr
+        while True:
+            await asyncio.sleep(3600)
+            
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("Bot manual olaraq dayandırıldı.")
+    finally:
+        # Bot dayandırılarkən (məsələn Render restart edəndə) bu hissə işə düşəcək
+        logger.info("Bot səliqəli şəkildə dayandırılır...")
+        if application.updater and application.updater.is_running():
+            await application.updater.stop()
+        if application.running:
+            await application.stop()
+        await application.shutdown()
 
 if __name__ == '__main__':
     asyncio.run(main())
