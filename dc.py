@@ -99,6 +99,57 @@ def remove_premium_user(user_id: int) -> bool:
 ABOUT_TEXT = "🤖 **Bot Haqqında**\n\nMən qruplar üçün nəzərdə tutulmuş əyləncə və statistika botuyam. Mənimlə viktorina, tapmaca və digər oyunları oynaya, həmçinin qrupdakı aktivliyinizə görə rütə qazana bilərsiniz."
 RULES_TEXT = """
 📜 **Bot İstifadə Təlimatı və Qrup Qaydaları**
+
+Aşağıda botun bütün funksiyalarından necə istifadə edəcəyiniz barədə məlumatlar və əsas qrup qaydaları qeyd olunub.
+
+---
+
+### 👤 **Ümumi İstifadəçilər Üçün Əmrlər**
+
+- `/start` - Botu başlatmaq və əsas menyunu görmək.
+- `/menim_rutbem` - Qrupdakı mesaj sayınızı və rütbənizi yoxlamaq. Premium üzvlər üçün mesajlar 1.5x sürətlə hesablanır və adlarının yanında 👑 nişanı görünür.
+- `/liderler` - Bu ay ən çox mesaj yazan 10 nəfərin siyahısı.
+- `/zer` - 1-dən 6-ya qədər təsadüfi zər atmaq.
+- `/haqqinda` - Bot haqqında qısa məlumat.
+- `/qaydalar` - Bu təlimatı yenidən görmək.
+
+---
+
+### 🎮 **Oyun Əmrləri**
+
+- `/viktorina` - Bilik yarışması olan viktorina oyununu başladır. Oyunu başladan şəxs cavab verə bilər.
+- `/dcoyun` - "Doğruluq yoxsa Cəsarət?" oyununu başladır. **(Yalnız adminlər başlada bilər)**
+
+---
+
+### 🛡️ **Adminlər Üçün İdarəetmə Əmrləri**
+
+**Söz Filtrasiyası:**
+- `/addword <söz>` - Mesajlarda qadağan olunacaq sözü filtrə əlavə edir.
+- `/delword <söz>` - Sözü filtr siyahısından silir.
+- `/listwords` - Filtrdə olan bütün sözlərin siyahısını göstərir.
+
+**İstifadəçi İdarəetməsi:**
+- `/warn <səbəb>` - Bir istifadəçiyə xəbərdarlıq etmək üçün onun mesajına cavab olaraq yazılır. 3 xəbərdarlıqdan sonra istifadəçi avtomatik 24 saatlıq səssizləşdirilir.
+- `/warnings` - Bir istifadəçinin xəbərdarlıqlarının sayını və səbəblərini görmək üçün mesajına cavab olaraq yazılır.
+- `/mute <müddət> [səbəb]` - İstifadəçini manual olaraq səssizləşdirmək üçün onun mesajına cavab olaraq yazılır.
+  - *Müddət Nümunələri:* `30m` (30 dəqiqə), `2h` (2 saat), `1d` (1 gün).
+- `/unmute` - İstifadəçidən səssiz rejimini ləğv etmək üçün mesajına cavab olaraq yazılır.
+
+**Premium İdarəetmə (Yalnız Bot Sahibi):**
+- `/addpremium <user_id>` - İstifadəçiyə premium status verir.
+- `/removepremium <user_id>` - İstifadəçidən premium statusu geri alır.
+
+---
+
+### 📌 **Əsas Qrup Qaydaları**
+
+1.  Reklam etmək qəti qadağandır.
+2.  Təhqir, söyüş və aqressiv davranışlara icazə verilmir.
+3.  Dini və siyasi mövzuları müzakirə etmək olmaz.
+"""
+
+📜 **Bot İstifadə Təlimatı və Qrup Qaydaları**
 ... (Təlimat mətni burada olduğu kimi qalır) ...
 """
 SADE_QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'}]
@@ -647,4 +698,5 @@ async def main() -> None:
 
 if __name__ == '__main__':
     asyncio.run(main())
+
 
