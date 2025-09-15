@@ -96,7 +96,7 @@ def remove_premium_user(user_id: int) -> bool:
         if conn: conn.close()
 
 # --- MƏZMUN SİYAHILARI ---
-ABOUT_TEXT = "🤖 **Bot Haqqında**\n\nMən qruplar üçün nəzərdə tutulmuş əyləncə və statistika botuyam. Mənimlə viktorina, tapmaca və digər oyunları oynaya, həmçinin qrupdakı aktivliyinizə görə rütə qazana bilərsiniz."
+ABOUT_TEXT = "🤖 **Bot Haqqında**\n\nMən qruplar üçün nəzərdə tutulmuş əyləncə və statistika botuyam. Mənimlə viktorina, tapmaca və digər oyunları oynaya, həmçinin qrupdakı aktivliyinizə görə rütbə qazana bilərsiniz."
 RULES_TEXT = """
 📜 **Bot İstifadə Təlimatı və Qrup Qaydaları**
 
@@ -149,15 +149,14 @@ Aşağıda botun bütün funksiyalarından necə istifadə edəcəyiniz barədə
 3.  Dini və siyasi mövzuları müzakirə etmək olmaz.
 """
 
-📜 **Bot İstifadə Təlimatı və Qrup Qaydaları**
-... (Təlimat mətni burada olduğu kimi qalır) ...
-"""
+# VIKTORINA VƏ DC SUALLARI
 SADE_QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'}]
 PREMIUM_QUIZ_QUESTIONS = [{'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'}]
-SADE_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə olub?"]
-SADE_DARE_TASKS = ["Qrupdakı son mesajı əlifbanın hər hərfi ilə tərsinə yaz."]
-PREMIUM_TRUTH_QUESTIONS = ["Həyatının geri qalanını yalnız bir filmi izləyərək keçirməli olsaydın, hansı filmi seçərdin?"]
-PREMIUM_DARE_TASKS = ["Qrupdakı adminlərdən birinə 10 dəqiqəlik \"Ən yaxşı admin\" statusu yaz."]
+SADE_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə olub?", "Heç kimin bilmədiyi bir bacarığın var?"]
+SADE_DARE_TASKS = ["Qrupdakı son mesajı əlifbanın hər hərfi ilə tərsinə yaz.", "Telefonundakı son şəkli qrupa göndər."]
+PREMIUM_TRUTH_QUESTIONS = ["Həyatının geri qalanını yalnız bir filmi izləyərək keçirməli olsaydın, hansı filmi seçərdin?", "Əgər zaman maşının olsaydı, keçmişə yoxsa gələcəyə gedərdin? Niyə?"]
+PREMIUM_DARE_TASKS = ["Qrupdakı adminlərdən birinə 10 dəqiqəlik \"Ən yaxşı admin\" statusu yaz.", "Səni ən yaxşı təsvir edən bir \"meme\" tap və qrupa göndər."]
+
 
 # --- KÖMƏKÇİ FUNKSİYALAR ---
 async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
@@ -519,7 +518,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data.startswith('dc_'):
         game_starter_id = context.chat_data.get('dc_game_starter_id')
         is_admin_or_starter = user.id == game_starter_id or await is_user_admin(chat_id, user.id, context)
-
         if data in ['dc_select_sade', 'dc_select_premium', 'dc_start_game', 'dc_stop_game', 'dc_next_turn', 'dc_skip_turn', 'dc_end_game_session']:
             if not is_admin_or_starter:
                 await query.answer("⛔ Bu düymədən yalnız oyunu başladan şəxs və ya adminlər istifadə edə bilər.", show_alert=True); return
@@ -559,7 +557,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             current_player = players[context.chat_data.get('dc_current_player_index', -1)]
             if user.id != current_player['id']:
                 await query.answer("⛔ Bu sənin sıran deyil!", show_alert=True); return
-            
             is_premium = context.chat_data.get('dc_is_premium', False)
             text_to_show = ""
             if 'truth' in data:
@@ -621,7 +618,7 @@ async def word_filter_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
         
     message_text = update.message.text.lower()
     for word in filtered_words:
-        if re.search(r'\b' + re.escape(word) + r'\b', message_text):
+        if re.search(r'\b' + re.escape(word) + r'\b', message_text, re.IGNORECASE):
             try:
                 await update.message.delete()
                 warn_reason = f"Qadağan olunmuş sözdən istifadə: '{word}'"
@@ -657,7 +654,6 @@ async def main() -> None:
         BotCommand("warnings", "İstifadəçinin xəbərdarlıqlarını yoxla (Admin)"),
     ]
     
-    # Handler-lər
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("qaydalar", qaydalar_command))
     application.add_handler(CommandHandler("haqqinda", haqqinda_command))
@@ -698,5 +694,3 @@ async def main() -> None:
 
 if __name__ == '__main__':
     asyncio.run(main())
-
-
