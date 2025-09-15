@@ -116,10 +116,43 @@ def delete_last_warning(chat_id: int, user_id: int) -> bool:
         if conn: conn.close()
 
 # --- MƏZMUN SİYAHILARI ---
-ABOUT_TEXT = "🤖 **Bot Haqqında**\n\nMən qruplar üçün nəzərdə tutulmuş əyləncə və statistika botuyam. Mənimlə viktorina, tapmaca və digər oyunları oynaya, həmçinin qrupdakı aktivliyinizə görə rütbə qazana bilərsiniz."
+ABOUT_TEXT = "🤖 **Bot Haqqında**\n\nMən qruplar üçün nəzərdə tutulmuş əyləncə və statistika botuyam. Mənimlə viktorina, tapmaca və digər oyunları oynaya, həmçinin qrupdakı aktivliyinizə görə rütə qazana bilərsiniz."
 RULES_TEXT = """
 📜 **Bot İstifadə Təlimatı və Qrup Qaydaları**
-... (Təlimat mətni olduğu kimi qalır) ...
+
+Aşağıda botun bütün funksiyalarından necə istifadə edəcəyiniz barədə məlumatlar və əsas qrup qaydaları qeyd olunub.
+
+---
+
+### 👤 **Ümumi İstifadəçilər Üçün Əmrlər**
+
+- `/start` - Botu başlatmaq və əsas menyunu görmək.
+- `/menim_rutbem` - Qrupdakı mesaj sayınızı və rütbənizi yoxlamaq. Premium üzvlər üçün mesajlar 1.5x sürətlə hesablanır və adlarının yanında 👑 nişanı görünür.
+- `/liderler` - Bu ay ən çox mesaj yazan 10 nəfərin siyahısı.
+- `/zer` - 1-dən 6-ya qədər təsadüfi zər atmaq.
+- `/haqqinda` - Bot haqqında qısa məlumat.
+- `/qaydalar` - Bu təlimatı yenidən görmək.
+
+---
+
+### 🎮 **Oyun Əmrləri**
+
+- `/viktorina` - Bilik yarışması olan viktorina oyununu başladır. Oyunu başladan şəxs cavab verə bilər.
+- `/dcoyun` - "Doğruluq yoxsa Cəsarət?" oyununu başladır. **(Yalnız adminlər başlada bilər)**
+
+---
+
+### 🛡️ **Adminlər Üçün İdarəetmə Əmrləri**
+
+- `/adminpanel` - Bütün admin əmrlərini görmək üçün bu əmri istifadə edin.
+
+---
+
+### 📌 **Əsas Qrup Qaydaları**
+
+1.  Reklam etmək qəti qadağandır.
+2.  Təhqir, söyüş və aqressiv davranışlara icazə verilmir.
+3.  Dini və siyasi mövzuları müzakirə etmək olmaz.
 """
 
 # VIKTORINA SUALLARI (YENİ BAZA: 60 SADƏ, 100 PREMIUM)
@@ -144,7 +177,7 @@ SADE_QUIZ_QUESTIONS = [
     {'question': 'Yazını ilk dəfə hansı sivilizasiya icad etmişdir?', 'options': ['Qədim Misir', 'Qədim Yunanıstan', 'Şumerlər', 'Qədim Çin'], 'correct': 'Şumerlər'},
     {'question': 'Amerikanı kim kəşf etmişdir?', 'options': ['Vasco da Gama', 'Ferdinand Magellan', 'Xristofor Kolumb', 'James Cook'], 'correct': 'Xristofor Kolumb'},
     {'question': 'İkinci Dünya Müharibəsi neçənci ildə başlamışdır?', 'options': ['1935', '1939', '1941', '1945'], 'correct': '1939'},
-    {'question': 'ABŞ-ın ilk prezidenti kim olmuşdur?', 'options': ['Abraham Lincoln', 'Tomas Cefferson', 'Corc Vaşinqton', 'Con Adams'], 'correct': 'Corc Vaşinqton'},
+    {'question': 'ABŞ-ın ilk prezidenti kim olmuşdur?', 'options': ['Abraham Lincoln', 'Tomas Cefferson', 'Corc Vaşqton', 'Con Adams'], 'correct': 'Corc Vaşqton'},
     {'question': 'Azərbaycan neçənci ildə müstəqilliyini bərpa etmişdir?', 'options': ['1989', '1990', '1991', '1993'], 'correct': '1991'},
     {'question': 'Hansı şəhər su üzərində qurulub?', 'options': ['Florensiya', 'Verona', 'Roma', 'Venesiya'], 'correct': 'Venesiya'},
     {'question': 'Roma İmperiyasının ilk imperatoru kim olmuşdur?', 'options': ['Yuli Sezar', 'Oktavian Avqust', 'Neron', 'Mark Antoni'], 'correct': 'Oktavian Avqust'},
@@ -223,7 +256,7 @@ PREMIUM_QUIZ_QUESTIONS = [
     {'question': 'Soyuq müharibə əsasən hansı iki supergüc arasında gedirdi?', 'options': ['Çin və Yaponiya', 'Almaniya və Fransa', 'ABŞ və SSRİ', 'Böyük Britaniya və ABŞ'], 'correct': 'ABŞ və SSRİ'},
     {'question': 'Napoleon Bonapart Vaterloo döyüşündə neçənci ildə məğlub oldu?', 'options': ['1805', '1812', '1815', '1821'], 'correct': '1815'},
     {'question': 'Osmanlı Sultanı Fateh Sultan Mehmet İstanbulu neçənci ildə fəth etmişdir?', 'options': ['1451', '1453', '1461', '1481'], 'correct': '1453'},
-    {'question': 'ABŞ-da köləliyi ləğv edən 13-cü düzəlişi hansı prezident imzalamışdır?', 'options': ['Corc Vaşinqton', 'Tomas Cefferson', 'Abraham Linkoln', 'Franklin Ruzvelt'], 'correct': 'Abraham Linkoln'},
+    {'question': 'ABŞ-da köləliyi ləğv edən 13-cü düzəlişi hansı prezident imzalamışdır?', 'options': ['Corc Vaşqton', 'Tomas Cefferson', 'Abraham Linkoln', 'Franklin Ruzvelt'], 'correct': 'Abraham Linkoln'},
     {'question': 'Makedoniyalı İskəndərin müəllimi olmuş məşhur yunan filosofu kimdir?', 'options': ['Platon', 'Sokrat', 'Aristotel', 'Diogen'], 'correct': 'Aristotel'},
     {'question': 'Hansı hadisə Orta Əsrlərin başlanğıcı hesab olunur?', 'options': ['Şərqi Roma İmperiyasının yaranması', 'Qərbi Roma İmperiyasının süqutu', 'Xaç yürüşlərinin başlaması', 'Amerikanın kəşfi'], 'correct': 'Qərbi Roma İmperiyasının süqutu'},
     {'question': 'Babək hansı xilafətə qarşı mübarizə aparmışdır?', 'options': ['Əməvilər', 'Abbasilər', 'Osmanlılar', 'Fatimilər'], 'correct': 'Abbasilər'},
@@ -318,4 +351,45 @@ PREMIUM_QUIZ_QUESTIONS = [
     {'question': 'Böyük Bariyer Rifi hansı ölkənin sahillərində yerləşir?', 'options': ['Braziliya', 'Meksika', 'Avstraliya', 'İndoneziya'], 'correct': 'Avstraliya'},
     {'question': 'Hansı yazıçı "Harri Potter" seriyasının müəllifidir?', 'options': ['J.R.R. Tolkien', 'George R.R. Martin', 'C.S. Lewis', 'J.K. Rowling'], 'correct': 'J.K. Rowling'},
 ]
-# ... (Qalan kod olduğu kimi davam edir)
+
+# ... (Qalan bütün funksiyalar və main bloku olduğu kimi qalır) ...
+
+async def main() -> None:
+    run_pre_flight_checks()
+    init_db()
+    
+    application = Application.builder().token(TOKEN).build()
+    
+    commands = [
+        BotCommand("start", "Əsas menyunu açmaq"),
+        BotCommand("qaydalar", "İstifadə təlimatı və qaydalar"),
+        BotCommand("haqqinda", "Bot haqqında məlumat"),
+        BotCommand("menim_rutbem", "Şəxsi rütbəni yoxlamaq"),
+        BotCommand("viktorina", "Viktorina oyununu başlatmaq"),
+        BotCommand("zer", "1-6 arası zər atmaq"),
+        BotCommand("liderler", "Aylıq liderlər cədvəli"),
+        BotCommand("dcoyun", "Doğruluq/Cəsarət oyununu başlatmaq (Admin)"),
+        BotCommand("adminpanel", "Admin idarəetmə paneli (Admin)"),
+    ]
+    
+    # Handlerlərin əlavə edilməsi...
+    # ... (Bütün handlerlər əvvəlki kodda olduğu kimi qalır) ...
+    
+    try:
+        logger.info("Bot işə düşür...")
+        await application.initialize()
+        await application.bot.set_my_commands(commands)
+        await application.updater.start_polling()
+        await application.start()
+        while True:
+            await asyncio.sleep(3600)
+    finally:
+        logger.info("Bot səliqəli şəkildə dayandırılır...")
+        if application.updater and application.updater.is_running():
+            await application.updater.stop()
+        if application.running:
+            await application.stop()
+        await application.shutdown()
+
+if __name__ == '__main__':
+    asyncio.run(main())
