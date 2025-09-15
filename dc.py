@@ -163,7 +163,6 @@ SADE_DARE_TASKS = ["Qrupdakı son mesajı əlifbanın hər hərfi ilə tərsinə
 PREMIUM_TRUTH_QUESTIONS = ["Həyatının geri qalanını yalnız bir filmi izləyərək keçirməli olsaydın, hansı filmi seçərdin?", "Əgər zaman maşının olsaydı, keçmişə yoxsa gələcəyə gedərdin? Niyə?"]
 PREMIUM_DARE_TASKS = ["Qrupdakı adminlərdən birinə 10 dəqiqəlik \"Ən yaxşı admin\" statusu yaz.", "Səni ən yaxşı təsvir edən bir \"meme\" tap və qrupa göndər."]
 
-
 # --- KÖMƏKÇİ FUNKSİYALAR ---
 async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
     if user_id == BOT_OWNER_ID: return True
@@ -439,10 +438,196 @@ async def unmute_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e: logger.error(f"Unmute zamanı xəta: {e}"); await update.message.reply_text("❌ Xəta baş verdi.")
 
 # OYUN FUNKSİYALARI
-# ... (Bütün oyun funksiyaları olduğu kimi qalır)
+async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if context.chat_data.get('quiz_active'): await update.message.reply_text("Artıq aktiv bir viktorina var!"); return
+    context.chat_data['quiz_starter_id'] = update.message.from_user.id
+    keyboard = [ [InlineKeyboardButton("Viktorina (Sadə) 🌱", callback_data="viktorina_sade")], [InlineKeyboardButton("Viktorina (Premium) 👑", callback_data="viktorina_premium")] ]
+    await update.message.reply_text(f"Salam, {update.message.from_user.first_name}! Zəhmət olmasa, viktorina növünü seçin:", reply_markup=InlineKeyboardMarkup(keyboard))
+
+async def ask_next_quiz_question(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = update.callback_query.message; is_premium = context.chat_data.get('quiz_is_premium', False)
+    question_pool = PREMIUM_QUIZ_QUESTIONS if is_premium else SADE_QUIZ_QUESTIONS
+    if not question_pool: await message.edit_text("Bu kateqoriya üçün heç bir sual tapılmadı."); return
+    recently_asked = context.chat_data.get('recently_asked_quiz', deque(maxlen=100))
+    possible_questions = [q for q in question_pool if q['question'] not in recently_asked]
+    if not possible_questions: possible_questions = question_pool; recently_asked.clear()
+    question_data = random.choice(possible_questions); recently_asked.append(question_data['question'])
+    context.chat_data['recently_asked_quiz'] = recently_asked
+    question, correct_answer, options = question_data['question'], question_data['correct'], list(question_data['options'])
+    random.shuffle(options)
+    context.chat_data['correct_quiz_answer'] = correct_answer; context.chat_data['current_question_text'] = question
+    keyboard = [[InlineKeyboardButton(option, callback_data=f"quiz_{option}")] for option in options]
+    keyboard.append([InlineKeyboardButton("Oyunu Bitir ⏹️", callback_data="quiz_stop")])
+    quiz_title = "Premium Viktorina 👑" if is_premium else "Sadə Viktorina 🌱"
+    lives_text = "❤️" * context.chat_data.get('quiz_lives', 3); score = context.chat_data.get('quiz_score', 0)
+    await message.edit_text(f"{quiz_title}\n\n**Xalınız:** {score} ⭐\n**Qalan can:** {lives_text}\n\n**Sual:** {question}", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
+    
+async def show_dc_registration_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = update.callback_query.message; players = context.chat_data.get('dc_players', [])
+    player_list_text = "\n\n**Qeydiyyatdan keçənlər:**\n" + ("Heç kim qoşulmayıb." if not players else "\n".join([f"- [{p['name']}](tg://user?id={p['id']})" for p in players]))
+    keyboard = [[InlineKeyboardButton("Qeydiyyatdan Keç ✅", callback_data="dc_register")], [InlineKeyboardButton("Oyunu Başlat ▶️", callback_data="dc_start_game")], [InlineKeyboardButton("Oyunu Ləğv Et ⏹️", callback_data="dc_stop_game")]]
+    await message.edit_text("**Doğruluq yoxsa Cəsarət?**\n\nOyuna qoşulmaq üçün 'Qeydiyyatdan Keç' düyməsinə basın." + player_list_text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN)
+
+async def dc_next_turn(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = update.callback_query.message; players = context.chat_data.get('dc_players', [])
+    current_index = context.chat_data.get('dc_current_player_index', -1)
+    next_index = (current_index + 1) % len(players); context.chat_data['dc_current_player_index'] = next_index
+    current_player = players[next_index]; is_premium = context.chat_data.get('dc_is_premium', False)
+    truth_callback = "dc_ask_truth_premium" if is_premium else "dc_ask_truth_sade"; dare_callback = "dc_ask_dare_premium" if is_premium else "dc_ask_dare_sade"
+    keyboard = [[InlineKeyboardButton("Doğruluq 🤔", callback_data=truth_callback)], [InlineKeyboardButton("Cəsarət 😈", callback_data=dare_callback)], [InlineKeyboardButton("Sıranı Ötür ⏭️", callback_data="dc_skip_turn")]]
+    await message.edit_text(f"Sıra sənə çatdı, [{current_player['name']}](tg://user?id={current_player['id']})! Seçimini et:", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN)
 
 # DÜYMƏ VƏ MESAJ HANDLERLƏRİ
-# ... (Bütün handlerlər olduğu kimi qalır)
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query; user = query.from_user; data = query.data; chat_id = query.message.chat.id
+    await query.answer()
+
+    if data.startswith("start_info") or data == "back_to_start":
+        if data == "start_info_about": await query.message.edit_text(text=ABOUT_TEXT, parse_mode='Markdown', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(" geri", callback_data="back_to_start")]]))
+        elif data == "start_info_qaydalar": await query.message.edit_text(text=RULES_TEXT, parse_mode=ParseMode.MARKDOWN, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(" geri", callback_data="back_to_start")]]))
+        elif data == "back_to_start":
+            keyboard = [ [InlineKeyboardButton("ℹ️ Bot Haqqında Məlumat", callback_data="start_info_about")], [InlineKeyboardButton("📜 İstifadə Təlimatı", callback_data="start_info_qaydalar")], [InlineKeyboardButton("👥 Oyun Qrupumuz", url="https://t.me/+0z5V-OvEMmgzZTFi")], [InlineKeyboardButton(f"👨‍💻 Admin ilə Əlaqə", url=f"https://t.me/{ADMIN_USERNAME}")] ]
+            await query.message.edit_text("Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin bölməni seç:", reply_markup=InlineKeyboardMarkup(keyboard))
+    
+    elif data.startswith("viktorina_") or data.startswith("quiz_"):
+        quiz_starter_id = context.chat_data.get('quiz_starter_id')
+        if quiz_starter_id and user.id != quiz_starter_id: await query.answer("⛔ Bu, sizin başlatdığınız oyun deyil.", show_alert=True); return
+        if data == 'viktorina_sade' or data == 'viktorina_premium':
+            is_premium_choice = (data == 'viktorina_premium')
+            if is_premium_choice and not is_user_premium(user.id): await query.message.edit_text(f"⛔ Bu funksiya yalnız premium istifadəçilər üçündür.\n\nPremium status üçün adminlə əlaqə saxlayın: [Admin](https://t.me/{ADMIN_USERNAME})", parse_mode='Markdown'); return
+            context.chat_data.clear()
+            context.chat_data.update({ 'quiz_active': True, 'quiz_is_premium': is_premium_choice, 'quiz_lives': 3, 'quiz_score': 0, 'quiz_message_id': query.message.message_id, 'quiz_starter_id': user.id })
+            await ask_next_quiz_question(update, context)
+        elif context.chat_data.get('quiz_active'):
+            if data == 'quiz_stop':
+                score = context.chat_data.get('quiz_score', 0)
+                await query.message.edit_text(f"Oyun dayandırıldı! ✅\n\nYekun xalınız: **{score}** ⭐", parse_mode='Markdown'); context.chat_data.clear()
+            elif data.startswith("quiz_"):
+                chosen_answer = data.split('_', 1)[1]; correct_answer = context.chat_data['correct_quiz_answer']
+                if chosen_answer == correct_answer:
+                    context.chat_data['quiz_score'] += 1
+                    await query.answer(text="✅ Düzdür! Növbəti sual gəlir...", show_alert=False); await asyncio.sleep(2); await ask_next_quiz_question(update, context)
+                else:
+                    context.chat_data['quiz_lives'] -= 1; lives_left = context.chat_data['quiz_lives']
+                    await query.answer(text=f"❌ Səhv cavab! {lives_left} canınız qaldı.", show_alert=True)
+                    if lives_left == 0:
+                        score = context.chat_data.get('quiz_score', 0)
+                        await query.message.edit_text(f"Canlarınız bitdi! 😔\nDüzgün cavab: **{correct_answer}**\nYekun xalınız: **{score}** ⭐", parse_mode='Markdown'); context.chat_data.clear()
+                    else:
+                        is_premium_mode = context.chat_data.get('quiz_is_premium', False)
+                        quiz_title = "Premium Viktorina 👑" if is_premium_mode else "Sadə Viktorina 🌱"
+                        lives_text = "❤️" * lives_left; score = context.chat_data.get('quiz_score', 0)
+                        question = context.chat_data.get('current_question_text', '')
+                        await query.message.edit_text(f"{quiz_title}\n\n**Xalınız:** {score} ⭐\n**Qalan can:** {lives_text}\n\n**Sual:** {question}", parse_mode='Markdown', reply_markup=query.message.reply_markup)
+    
+    elif data.startswith('dc_'):
+        game_starter_id = context.chat_data.get('dc_game_starter_id')
+        is_admin_or_starter = user.id == game_starter_id or await is_user_admin(chat_id, user.id, context)
+        if data in ['dc_select_sade', 'dc_select_premium', 'dc_start_game', 'dc_stop_game', 'dc_next_turn', 'dc_skip_turn', 'dc_end_game_session']:
+            if not is_admin_or_starter: await query.answer("⛔ Bu düymədən yalnız oyunu başladan şəxs və ya adminlər istifadə edə bilər.", show_alert=True); return
+        if data in ['dc_select_sade', 'dc_select_premium']:
+            is_premium_choice = (data == 'dc_select_premium')
+            if is_premium_choice and not is_user_premium(user.id): await query.answer("⛔ Bu rejimi yalnız premium statuslu adminlər başlada bilər.", show_alert=True); return
+            context.chat_data.update({'dc_game_active': True, 'dc_is_premium': is_premium_choice, 'dc_players': [], 'dc_current_player_index': -1, 'dc_game_starter_id': user.id})
+            await show_dc_registration_message(update, context)
+        elif data == 'dc_register':
+            if not context.chat_data.get('dc_game_active'): await query.answer("Artıq aktiv oyun yoxdur.", show_alert=True); return
+            players = context.chat_data.get('dc_players', [])
+            if any(p['id'] == user.id for p in players): await query.answer("Siz artıq qeydiyyatdan keçmisiniz.", show_alert=True)
+            else:
+                players.append({'id': user.id, 'name': user.first_name})
+                await query.answer("Uğurla qoşuldunuz!", show_alert=False)
+                await show_dc_registration_message(update, context)
+        elif data == 'dc_start_game':
+            players = context.chat_data.get('dc_players', [])
+            if len(players) < 2: await query.answer("⛔ Oyunun başlaması üçün minimum 2 nəfər qeydiyyatdan keçməlidir.", show_alert=True); return
+            random.shuffle(players)
+            await dc_next_turn(update, context)
+        elif data == 'dc_stop_game':
+            await query.message.edit_text("Oyun admin tərəfindən ləğv edildi.")
+            for key in list(context.chat_data):
+                if key.startswith('dc_'): del context.chat_data[key]
+        elif data.startswith('dc_ask_'):
+            players = context.chat_data.get('dc_players', [])
+            current_player = players[context.chat_data.get('dc_current_player_index', -1)]
+            if user.id != current_player['id']: await query.answer("⛔ Bu sənin sıran deyil!", show_alert=True); return
+            is_premium = context.chat_data.get('dc_is_premium', False)
+            text_to_show = ""
+            if 'truth' in data: question = random.choice(PREMIUM_TRUTH_QUESTIONS if is_premium else SADE_TRUTH_QUESTIONS); text_to_show = f"🤔 **Doğruluq:**\n\n`{question}`"
+            else: task = random.choice(PREMIUM_DARE_TASKS if is_premium else SADE_DARE_TASKS); text_to_show = f"😈 **Cəsarət:**\n\n`{task}`"
+            keyboard = [[InlineKeyboardButton("Növbəti Oyunçu ➡️", callback_data="dc_next_turn"), InlineKeyboardButton("Oyunu Bitir ⏹️", callback_data="dc_end_game_session")]]
+            await query.message.edit_text(text_to_show, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN)
+        elif data == 'dc_next_turn' or data == 'dc_skip_turn':
+            if data == 'dc_skip_turn': await query.answer("Sıra ötürülür...", show_alert=False)
+            await dc_next_turn(update, context)
+        elif data == 'dc_end_game_session':
+            players = context.chat_data.get('dc_players', [])
+            player_names = ", ".join([p['name'] for p in players])
+            end_text = f"**Doğruluq yoxsa Cəsarət** oyunu [{user.first_name}](tg://user?id={user.id}) tərəfindən bitirildi!\n\nİştirak etdiyiniz üçün təşəkkürlər: {player_names}"
+            await query.message.edit_text(end_text, parse_mode=ParseMode.MARKDOWN)
+            for key in list(context.chat_data):
+                if key.startswith('dc_'): del context.chat_data[key]
+
+    elif data.startswith("delwarn_"):
+        if not await is_user_admin(chat_id, user.id, context):
+            await query.answer("⛔ Bu əməliyyatı yalnız adminlər edə bilər.", show_alert=True); return
+        user_id_to_clear = int(data.split("_")[1])
+        if delete_last_warning(chat_id, user_id_to_clear):
+            await query.message.edit_text(f"✅ İstifadəçinin son xəbərdarlığı [{user.first_name}](tg://user?id={user.id}) tərəfindən silindi.", parse_mode=ParseMode.MARKDOWN)
+        else:
+            await query.message.edit_text("ℹ️ İstifadəçinin aktiv xəbərdarlığı tapılmadı.")
+
+async def handle_all_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or update.message.chat.type == ChatType.PRIVATE: return
+    user = update.message.from_user; chat_id = update.message.chat.id
+    conn, cur = None, None
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cur = conn.cursor()
+        cur.execute("INSERT INTO message_counts (chat_id, user_id, username, message_timestamp) VALUES (%s, %s, %s, %s);", (chat_id, user.id, user.username or user.first_name, datetime.datetime.now(datetime.timezone.utc)))
+        conn.commit()
+    except Exception as e: logger.error(f"Mesajı bazaya yazarkən xəta: {e}")
+    finally:
+        if cur: cur.close()
+        if conn: conn.close()
+
+async def word_filter_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text or update.message.chat.type == ChatType.PRIVATE: return
+    chat_id = update.message.chat.id; user = update.message.from_user
+    if await is_user_admin(chat_id, user.id, context): return
+    filtered_words_cache = context.chat_data.get('filtered_words')
+    if filtered_words_cache and (datetime.datetime.now() - filtered_words_cache[1]).total_seconds() < 300:
+        filtered_words = filtered_words_cache[0]
+    else:
+        conn, cur = None, None
+        try:
+            conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+            cur = conn.cursor()
+            cur.execute("SELECT word FROM filtered_words WHERE chat_id = %s;", (chat_id,))
+            filtered_words = {word[0] for word in cur.fetchall()}
+            context.chat_data['filtered_words'] = (filtered_words, datetime.datetime.now())
+        except Exception as e: logger.error(f"Filtr sözləri çəkilərkən xəta: {e}"); return
+        finally:
+            if cur: cur.close()
+            if conn: conn.close()
+    message_text = update.message.text.lower()
+    for word in filtered_words:
+        if re.search(r'\b' + re.escape(word) + r'\b', message_text, re.IGNORECASE):
+            try:
+                await update.message.delete()
+                warn_reason = f"Qadağan olunmuş sözdən istifadə: '{word}'"
+                conn, cur = None, None
+                try:
+                    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+                    cur = conn.cursor()
+                    cur.execute("INSERT INTO warnings (chat_id, user_id, admin_id, reason) VALUES (%s, %s, %s, %s);", (chat_id, user.id, context.bot.id, warn_reason))
+                    conn.commit()
+                except Exception as e: logger.error(f"Silent warn error: {e}")
+                finally:
+                    if cur: cur.close()
+                    if conn: conn.close()
+            except Exception as e: logger.error(f"Mesaj silinərkən xəta: {e}")
+            break
 
 # --- ƏSAS MAIN FUNKSİYASI ---
 async def main() -> None:
@@ -462,7 +647,6 @@ async def main() -> None:
         BotCommand("adminpanel", "Admin idarəetmə paneli (Admin)"),
     ]
     
-    # Handler-lər
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("qaydalar", qaydalar_command))
     application.add_handler(CommandHandler("haqqinda", haqqinda_command))
@@ -486,21 +670,10 @@ async def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, word_filter_handler), group=0)
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_all_messages), group=1)
     
-    try:
-        logger.info("Bot işə düşür...")
-        await application.initialize()
-        await application.bot.set_my_commands(commands)
-        await application.updater.start_polling()
-        await application.start()
-        while True:
-            await asyncio.sleep(3600)
-    finally:
-        logger.info("Bot səliqəli şəkildə dayandırılır...")
-        if application.updater and application.updater.is_running():
-            await application.updater.stop()
-        if application.running:
-            await application.stop()
-        await application.shutdown()
+    # SADƏLƏŞDİRİLMİŞ VƏ ETİBARLI İŞƏ SALMA MƏNTİQİ
+    logger.info("Bot işə düşür və Telegram-dan sorğuları gözləyir...")
+    await application.run_polling()
 
 if __name__ == '__main__':
     asyncio.run(main())
+
