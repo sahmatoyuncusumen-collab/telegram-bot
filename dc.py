@@ -96,12 +96,8 @@ ABOUT_TEXT = "🤖 **Bot Haqqında**\n\nMən qruplar üçün nəzərdə tutulmu�
 RULES_TEXT = "📜 **Qrup Qaydaları**\n\n1. Reklam etmək qəti qadağandır.\n2. Təhqir, söyüş və aqressiv davranışlara icazə verilmir.\n3. Dini və siyasi mövzuları müzakirə etmək olmaz.\n4. Qaydalara riayət etməyən istifadəçilər xəbərdarlıqsız uzaqlaşdırılacaq."
 
 # VIKTORINA SUALLARI
-SADE_QUIZ_QUESTIONS = [
-    {'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'},
-]
-PREMIUM_QUIZ_QUESTIONS = [
-    {'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'},
-]
+SADE_QUIZ_QUESTIONS = [{'question': 'Azərbaycanın paytaxtı haradır?', 'options': ['Gəncə', 'Sumqayıt', 'Bakı', 'Naxçıvan'], 'correct': 'Bakı'}]
+PREMIUM_QUIZ_QUESTIONS = [{'question': 'Əsərlərini Nizami Gəncəvi imzası ilə yazan şairin əsl adı nədir?', 'options': ['İlyas Yusif oğlu', 'Məhəmməd Füzuli', 'İmadəddin Nəsimi', 'Əliağa Vahid'], 'correct': 'İlyas Yusif oğlu'}]
 
 # DOĞRULUQ VƏ CƏSARƏT SUALLARI
 SADE_TRUTH_QUESTIONS = ["Uşaqlıqda ən böyük qorxun nə olub?", "Heç kimin bilmədiyi bir bacarığın var?", "Ən son nə vaxt ağlamısan və niyə?", "Əgər bir gün görünməz olsaydın, nə edərdin?", "Telefonunda ən utancverici proqram hansıdır?"]
@@ -109,10 +105,9 @@ SADE_DARE_TASKS = ["Qrupdakı son mesajı əlifbanın hər hərfi ilə tərsinə
 PREMIUM_TRUTH_QUESTIONS = ["Həyatının geri qalanını yalnız bir filmi izləyərək keçirməli olsaydın, hansı filmi seçərdin?", "Əgər zaman maşının olsaydı, keçmişə yoxsa gələcəyə gedərdin? Niyə?", "Sənə ən çox təsir edən kitab hansı olub?", "Münasibətdə sənin üçün ən vacib 3 şey nədir?", "Özündə dəyişdirmək istədiyin bir xüsusiyyət hansıdır?"]
 PREMIUM_DARE_TASKS = ["Qrupdakı adminlərdən birinə 10 dəqiqəlik \"Ən yaxşı admin\" statusu yaz.", "Səni ən yaxşı təsvir edən bir \"meme\" tap və qrupa göndər.", "Səsini dəyişdirərək bir nağıl personajı kimi danış və səsli mesaj göndər.", "Google-da \"Mən niyə bu qədər möhtəşəməm\" yazıb axtarış nəticələrinin şəklini göndər.", "Profil bioqrafiyanı 15 dəqiqəlik \"Bu qrupun premium üzvü\" olaraq dəyişdir."]
 
-
 # --- KÖMƏKÇİ FUNKSİYALAR ---
 async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAULT_TYPE) -> bool:
-    if user_id == BOT_OWNER_ID: return True # Bot sahibi hər zaman admindir
+    if user_id == BOT_OWNER_ID: return True
     if user_id == chat_id: return True
     try:
         chat_admins = await context.bot.get_chat_administrators(chat_id)
@@ -122,8 +117,7 @@ async def is_user_admin(chat_id: int, user_id: int, context: ContextTypes.DEFAUL
         return False
 
 def get_rank_title(count: int, is_premium: bool = False) -> str:
-    if is_premium and count > 5000:
-        return "Qızıl Tac ⚜️"
+    if is_premium and count > 5000: return "Qızıl Tac ⚜️"
     if count <= 50: return "Yeni Gələn 🐣"
     elif count <= 250: return "Daimi Sakin 🏠"
     elif count <= 750: return "Söhbətcil 🗣️"
@@ -221,8 +215,7 @@ async def liderler_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if conn: conn.close()
         
 async def dcoyun_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.message.from_user.id
-    chat_id = update.message.chat.id
+    user_id = update.message.from_user.id; chat_id = update.message.chat.id
     if update.message.chat.type == ChatType.PRIVATE:
         await update.message.reply_text("Bu oyunu yalnız qruplarda oynamaq olar."); return
     if not await is_user_admin(chat_id, user_id, context):
@@ -267,8 +260,24 @@ async def viktorina_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"Salam, {update.message.from_user.first_name}! Zəhmət olmasa, viktorina növünü seçin:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def ask_next_quiz_question(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # ... (Bu funksiya əvvəlki tam kodda olduğu kimi qalır)
-    pass
+    message = update.callback_query.message if hasattr(update, 'callback_query') and update.callback_query else update.message
+    is_premium = context.chat_data.get('quiz_is_premium', False)
+    question_pool = PREMIUM_QUIZ_QUESTIONS if is_premium else SADE_QUIZ_QUESTIONS
+    if not question_pool: await message.edit_text("Bu kateqoriya üçün heç bir sual tapılmadı."); return
+    recently_asked = context.chat_data.get('recently_asked_quiz', deque(maxlen=100))
+    possible_questions = [q for q in question_pool if q['question'] not in recently_asked]
+    if not possible_questions: possible_questions = question_pool; recently_asked.clear()
+    question_data = random.choice(possible_questions)
+    recently_asked.append(question_data['question'])
+    context.chat_data['recently_asked_quiz'] = recently_asked
+    question, correct_answer, options = question_data['question'], question_data['correct'], list(question_data['options'])
+    random.shuffle(options)
+    context.chat_data['correct_quiz_answer'] = correct_answer; context.chat_data['current_question_text'] = question
+    keyboard = [[InlineKeyboardButton(option, callback_data=f"quiz_{option}")] for option in options]
+    keyboard.append([InlineKeyboardButton("Oyunu Bitir ⏹️", callback_data="quiz_stop")])
+    quiz_title = "Premium Viktorina 👑" if is_premium else "Sadə Viktorina 🌱"
+    lives_text = "❤️" * context.chat_data.get('quiz_lives', 3); score = context.chat_data.get('quiz_score', 0)
+    await message.edit_text(f"{quiz_title}\n\n**Xalınız:** {score} ⭐\n**Qalan can:** {lives_text}\n\n**Sual:** {question}", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
     
 # DÜYMƏLƏRİ VƏ MESAJLARI İDARƏ EDƏN FUNKSİYALAR
 async def show_dc_registration_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -290,13 +299,7 @@ async def dc_next_turn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     is_premium = context.chat_data.get('dc_is_premium', False)
     truth_callback = "dc_ask_truth_premium" if is_premium else "dc_ask_truth_sade"
     dare_callback = "dc_ask_dare_premium" if is_premium else "dc_ask_dare_sade"
-    
-    # DƏYİŞİKLİK: Yeni "Sıranı Ötür" düyməsi əlavə edildi
-    keyboard = [
-        [InlineKeyboardButton("Doğruluq 🤔", callback_data=truth_callback)],
-        [InlineKeyboardButton("Cəsarət 😈", callback_data=dare_callback)],
-        [InlineKeyboardButton("Sıranı Ötür ⏭️", callback_data="dc_skip_turn")]
-    ]
+    keyboard = [[InlineKeyboardButton("Doğruluq 🤔", callback_data=truth_callback)], [InlineKeyboardButton("Cəsarət 😈", callback_data=dare_callback)], [InlineKeyboardButton("Sıranı Ötür ⏭️", callback_data="dc_skip_turn")]]
     await message.edit_text(f"Sıra sənə çatdı, [{current_player['name']}](tg://user?id={current_player['id']})! Seçimini et:", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN)
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -308,9 +311,43 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         quiz_starter_id = context.chat_data.get('quiz_starter_id')
         if quiz_starter_id and user.id != quiz_starter_id:
             await query.answer("⛔ Bu, sizin başlatdığınız oyun deyil.", show_alert=True); return
-        # ... (Viktorina logic tam şəkildə aşağıda yerləşdirilib)
         
-    # Start menyusu
+        if data == 'viktorina_sade' or data == 'viktorina_premium':
+            is_premium_choice = (data == 'viktorina_premium')
+            if is_premium_choice and not is_user_premium(user.id):
+                await query.message.edit_text(f"⛔ Bu funksiya yalnız premium istifadəçilər üçündür.\n\nPremium status üçün adminlə əlaqə saxlayın: [Admin](https://t.me/{ADMIN_USERNAME})", parse_mode='Markdown'); return
+            context.chat_data.clear()
+            context.chat_data.update({ 'quiz_active': True, 'quiz_is_premium': is_premium_choice, 'quiz_lives': 3, 'quiz_score': 0, 'quiz_message_id': query.message.message_id, 'quiz_starter_id': user.id })
+            await ask_next_quiz_question(update, context)
+        elif context.chat_data.get('quiz_active'):
+            if data == 'quiz_stop':
+                score = context.chat_data.get('quiz_score', 0)
+                await query.message.edit_text(f"Oyun dayandırıldı! ✅\n\nYekun xalınız: **{score}** ⭐", parse_mode='Markdown')
+                context.chat_data.clear()
+            elif data.startswith("quiz_"):
+                chosen_answer = data.split('_', 1)[1]; correct_answer = context.chat_data['correct_quiz_answer']
+                if chosen_answer == correct_answer:
+                    context.chat_data['quiz_score'] += 1
+                    await query.answer(text="✅ Düzdür! Növbəti sual gəlir...", show_alert=False)
+                    await asyncio.sleep(2)
+                    await ask_next_quiz_question(update, context)
+                else:
+                    context.chat_data['quiz_lives'] -= 1
+                    lives_left = context.chat_data['quiz_lives']
+                    await query.answer(text=f"❌ Səhv cavab! {lives_left} canınız qaldı.", show_alert=True)
+                    if lives_left == 0:
+                        score = context.chat_data.get('quiz_score', 0)
+                        await query.message.edit_text(f"Canlarınız bitdi! 😔\nDüzgün cavab: **{correct_answer}**\nYekun xalınız: **{score}** ⭐", parse_mode='Markdown')
+                        context.chat_data.clear()
+                    else:
+                        is_premium_mode = context.chat_data.get('quiz_is_premium', False)
+                        quiz_title = "Premium Viktorina 👑" if is_premium_mode else "Sadə Viktorina 🌱"
+                        lives_text = "❤️" * lives_left
+                        score = context.chat_data.get('quiz_score', 0)
+                        question = context.chat_data.get('current_question_text', '')
+                        await query.message.edit_text(f"{quiz_title}\n\n**Xalınız:** {score} ⭐\n**Qalan can:** {lives_text}\n\n**Sual:** {question}", parse_mode='Markdown', reply_markup=query.message.reply_markup)
+        return
+
     if data in ["start_info_about", "start_info_qaydalar", "back_to_start"]:
         if data == "start_info_about":
             await query.message.edit_text(text=ABOUT_TEXT, parse_mode='Markdown', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(" geri", callback_data="back_to_start")]]))
@@ -321,14 +358,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.message.edit_text("Salam! Mən Oyun Botuyam. 🤖\nAşağıdakı menyudan istədiyin bölməni seç:", reply_markup=InlineKeyboardMarkup(keyboard))
         return
         
-    # Doğruluq/Cəsarət
     if data.startswith('dc_'):
         game_starter_id = context.chat_data.get('dc_game_starter_id')
-        
-        # Admin və ya oyunu başladan yoxlamaları
-        if data in ['dc_select_sade', 'dc_select_premium', 'dc_start_game', 'dc_stop_game', 'dc_next_turn', 'dc_skip_turn']:
-            is_admin = await is_user_admin(chat_id, user.id, context)
-            if user.id != game_starter_id and not is_admin:
+        is_admin_or_starter = user.id == game_starter_id or await is_user_admin(chat_id, user.id, context)
+
+        if data in ['dc_select_sade', 'dc_select_premium', 'dc_start_game', 'dc_stop_game', 'dc_next_turn', 'dc_skip_turn', 'dc_end_game_session']:
+            if not is_admin_or_starter:
                 await query.answer("⛔ Bu düymədən yalnız oyunu başladan şəxs və ya adminlər istifadə edə bilər.", show_alert=True); return
         
         if data in ['dc_select_sade', 'dc_select_premium']:
@@ -356,7 +391,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             random.shuffle(players)
             await dc_next_turn(update, context)
 
-        elif data == 'dc_stop_game':
+        elif data == 'dc_stop_game': # Qeydiyyatı ləğv edir
             await query.message.edit_text("Oyun admin tərəfindən ləğv edildi.")
             for key in list(context.chat_data):
                 if key.startswith('dc_'): del context.chat_data[key]
@@ -372,55 +407,34 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if 'truth' in data:
                 question = random.choice(PREMIUM_TRUTH_QUESTIONS if is_premium else SADE_TRUTH_QUESTIONS)
                 text_to_show = f"🤔 **Doğruluq:**\n\n`{question}`"
-            else: # dare
+            else:
                 task = random.choice(PREMIUM_DARE_TASKS if is_premium else SADE_DARE_TASKS)
                 text_to_show = f"😈 **Cəsarət:**\n\n`{task}`"
-            await query.message.edit_text(text_to_show, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Növbəti Oyunçu ➡️", callback_data="dc_next_turn")]]), parse_mode=ParseMode.MARKDOWN)
+            
+            # YENİLİK: Oyunu bitirmək üçün düymə
+            keyboard = [[
+                InlineKeyboardButton("Növbəti Oyunçu ➡️", callback_data="dc_next_turn"),
+                InlineKeyboardButton("Oyunu Bitir ⏹️", callback_data="dc_end_game_session")
+            ]]
+            await query.message.edit_text(text_to_show, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN)
 
         elif data == 'dc_next_turn' or data == 'dc_skip_turn':
             if data == 'dc_skip_turn':
                 await query.answer("Sıra ötürülür...", show_alert=False)
             await dc_next_turn(update, context)
-        return
-
-    # Viktorina
-    if data == 'viktorina_sade' or data == 'viktorina_premium':
-        is_premium_choice = (data == 'viktorina_premium')
-        if is_premium_choice and not is_user_premium(user.id):
-            await query.message.edit_text(f"⛔ Bu funksiya yalnız premium istifadəçilər üçündür.\n\nPremium status üçün adminlə əlaqə saxlayın: [Admin](https://t.me/{ADMIN_USERNAME})", parse_mode='Markdown'); return
-        context.chat_data.clear()
-        context.chat_data.update({ 'quiz_active': True, 'quiz_is_premium': is_premium_choice, 'quiz_lives': 3, 'quiz_score': 0, 'quiz_message_id': query.message.message_id, 'quiz_starter_id': user.id })
-        await ask_next_quiz_question(update, context)
-    elif context.chat_data.get('quiz_active'):
-        if data == 'quiz_stop':
-            score = context.chat_data.get('quiz_score', 0)
-            await query.message.edit_text(f"Oyun dayandırıldı! ✅\n\nYekun xalınız: **{score}** ⭐", parse_mode='Markdown')
-            context.chat_data.clear()
-        elif data.startswith("quiz_"):
-            chosen_answer = data.split('_', 1)[1]; correct_answer = context.chat_data['correct_quiz_answer']
-            if chosen_answer == correct_answer:
-                context.chat_data['quiz_score'] += 1
-                await query.answer(text="✅ Düzdür! Növbəti sual gəlir...", show_alert=False)
-                await asyncio.sleep(2)
-                await ask_next_quiz_question(update, context)
-            else:
-                context.chat_data['quiz_lives'] -= 1
-                lives_left = context.chat_data['quiz_lives']
-                await query.answer(text=f"❌ Səhv cavab! {lives_left} canınız qaldı.", show_alert=True)
-                if lives_left == 0:
-                    score = context.chat_data.get('quiz_score', 0)
-                    await query.message.edit_text(f"Canlarınız bitdi! 😔\nDüzgün cavab: **{correct_answer}**\nYekun xalınız: **{score}** ⭐", parse_mode='Markdown')
-                    context.chat_data.clear()
-                else:
-                    is_premium = context.chat_data.get('quiz_is_premium', False)
-                    quiz_title = "Premium Viktorina 👑" if is_premium else "Sadə Viktorina 🌱"
-                    lives_text = "❤️" * lives_left
-                    score = context.chat_data.get('quiz_score', 0)
-                    question = context.chat_data.get('current_question_text', '')
-                    await query.message.edit_text(f"{quiz_title}\n\n**Xalınız:** {score} ⭐\n**Qalan can:** {lives_text}\n\n**Sual:** {question}", parse_mode='Markdown', reply_markup=query.message.reply_markup)
-    else:
-        if not data.startswith("dc_"):
-            await query.answer("Bu oyun artıq bitib.", show_alert=True)
+        
+        # YENİLİK: Oyun sessiyasını bitirmək
+        elif data == 'dc_end_game_session':
+            players = context.chat_data.get('dc_players', [])
+            player_names = ", ".join([p['name'] for p in players])
+            end_text = (
+                f"**Doğruluq yoxsa Cəsarət** oyunu [{user.first_name}](tg://user?id={user.id}) tərəfindən bitirildi!\n\n"
+                f"İştirak etdiyiniz üçün təşəkkürlər: {player_names}\n\n"
+                "Yeni oyun üçün /dcoyun yazın."
+            )
+            await query.message.edit_text(end_text, parse_mode=ParseMode.MARKDOWN)
+            for key in list(context.chat_data):
+                if key.startswith('dc_'): del context.chat_data[key]
 
 async def handle_all_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]: return
@@ -483,3 +497,4 @@ async def main() -> None:
 
 if __name__ == '__main__':
     asyncio.run(main())
+
